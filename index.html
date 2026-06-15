@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>辽宁中医嘉和医院 · 定点自查可视化系统</title>
+<style>
+:root {
+  --primary: #1a5276;
+  --primary-light: #2980b9;
+  --gold: #b8860b;
+  --gold-light: #f0c75e;
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #2c3e50;
+  --text-secondary: #5a6c7d;
+  --border: #dce3ea;
+  --success: #27ae60;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --info: #2980b9;
+  --radius: 10px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--primary-light);text-decoration:none}
+
+/* ===== HEADER ===== */
+.header{background:linear-gradient(135deg,var(--primary),#0d3b5c);color:#fff;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.15)}
+.header-left{display:flex;align-items:center;gap:16px}
+.header-logo{font-size:28px}
+.header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+.header-sub{font-size:12px;opacity:0.8}
+.header-right{display:flex;align-items:center;gap:12px}
+.btn{padding:8px 18px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
+.btn-outline{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.btn-outline:hover{background:rgba(255,255,255,0.25)}
+.btn-primary{background:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.progress-mini{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px}
+.progress-mini-bar{width:100px;height:6px;background:rgba(255,255,255,0.25);border-radius:3px;overflow:hidden}
+.progress-mini-fill{height:100%;background:var(--gold-light);border-radius:3px;transition:width 0.4s}
+
+/* ===== TAB BAR ===== */
+.tab-bar{display:flex;background:var(--card);border-bottom:2px solid var(--border);padding:0 32px;position:sticky;top:72px;z-index:99;gap:0}
+.tab-btn{flex:1;max-width:320px;padding:14px 24px;border:none;background:none;cursor:pointer;font-size:15px;font-weight:500;color:var(--text-secondary);border-bottom:3px solid transparent;transition:var(--transition);position:relative;white-space:nowrap}
+.tab-btn:hover{color:var(--primary);background:#f8fafc}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
+.tab-badge{display:inline-block;background:var(--primary);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+
+/* ===== LAYOUT ===== */
+.app-layout{display:flex;min-height:calc(100vh - 140px)}
+.sidebar{width:240px;min-width:240px;background:var(--card);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:124px;height:calc(100vh - 124px);overflow-y:auto;transition:var(--transition)}
+.sidebar-title{font-size:12px;text-transform:uppercase;color:var(--text-secondary);padding:0 20px 12px;letter-spacing:1px}
+.sidebar-nav{list-style:none}
+.sidebar-nav a{display:block;padding:10px 20px;font-size:13px;color:var(--text-secondary);border-left:3px solid transparent;transition:var(--transition)}
+.sidebar-nav a:hover,.sidebar-nav a.active{color:var(--primary);background:#f0f7ff;border-left-color:var(--primary)}
+.main-content{flex:1;padding:24px 32px;max-width:1100px;overflow-y:auto}
+.main-content section{margin-bottom:40px;scroll-margin-top:140px}
+
+/* ===== CARDS ===== */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px;transition:var(--transition)}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card-title{font-size:17px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:22px}
+.card-badge{font-size:11px;padding:4px 10px;border-radius:12px;font-weight:600}
+.badge-info{background:#eaf4fd;color:var(--info)}
+.badge-warning{background:#fef9e7;color:var(--warning)}
+.badge-success{background:#eafaf1;color:var(--success)}
+.badge-danger{background:#fdedec;color:var(--danger)}
+
+/* ===== FLOWCHART ===== */
+.flow-steps{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:16px 0;overflow-x:auto}
+.flow-step{flex:1;min-width:140px;text-align:center;position:relative;cursor:pointer}
+.flow-step-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:16px 12px;transition:var(--transition);position:relative}
+.flow-step-card:hover{border-color:var(--primary-light);transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.flow-step-num{display:inline-block;width:32px;height:32px;line-height:32px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:14px;margin-bottom:8px}
+.flow-step.active .flow-step-card{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,134,11,0.15)}
+.flow-step.active .flow-step-num{background:var(--gold);color:#1a1a1a}
+.flow-step-title{font-weight:700;font-size:14px;margin-bottom:4px}
+.flow-step-desc{font-size:12px;color:var(--text-secondary)}
+.flow-arrow{display:flex;align-items:center;padding-top:28px;font-size:20px;color:var(--primary-light);flex-shrink:0}
+.flow-detail{display:none;padding:16px;margin-top:12px;background:#f8fafc;border-radius:8px;font-size:13px}
+.flow-detail.open{display:block}
+.flow-detail ul{list-style:none;padding:0}
+.flow-detail li{padding:4px 0;padding-left:16px;position:relative}
+.flow-detail li::before{content:'•';position:absolute;left:0;color:var(--primary-light)}
+
+/* ===== ORG CHART ===== */
+.org-chart{text-align:center;padding:20px 0}
+.org-node{display:inline-block;background:var(--primary);color:#fff;padding:10px 24px;border-radius:8px;font-weight:700;margin-bottom:12px;font-size:14px}
+.org-arrow{color:var(--primary-light);font-size:20px;margin:4px 0}
+.org-row{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:8px 0}
+.org-dept{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;min-width:100px;text-align:center;transition:var(--transition)}
+.org-dept:hover{border-color:var(--primary-light);background:#f0f7ff}
+.org-dept-name{font-weight:600;color:var(--primary)}
+.org-dept-role{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+/* ===== TRIPLE CHECK ===== */
+.triple-check{display:flex;align-items:center;justify-content:center;gap:20px;padding:20px;flex-wrap:wrap}
+.tc-box{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:16px 20px;text-align:center;min-width:120px;font-weight:600;font-size:14px}
+.tc-center{text-align:center}
+.tc-match{font-size:24px;font-weight:900;color:var(--primary);margin:8px 0}
+.tc-result{display:flex;gap:12px;margin-top:8px}
+.tc-pass{background:#eafaf1;color:var(--success);padding:8px 16px;border-radius:6px;font-weight:600}
+.tc-fail{background:#fdedec;color:var(--danger);padding:8px 16px;border-radius:6px;font-weight:600}
+
+/* ===== CHECKLIST ===== */
+.checklist{margin:0;padding:0;list-style:none}
+.checklist li{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;transition:var(--transition);cursor:pointer;border:1px solid transparent}
+.checklist li:hover{background:#f8fafc;border-color:var(--border)}
+.checklist li.checked{background:#f0faf4}
+.checklist li.checked .cl-label{color:var(--success)}
+.cl-cb{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:2px solid #bdc3c7;border-radius:4px;flex-shrink:0;cursor:pointer;transition:var(--transition);position:relative;top:1px}
+.cl-cb:checked{background:var(--success);border-color:var(--success)}
+.cl-cb:checked::after{content:'✓';position:absolute;top:-1px;left:4px;color:#fff;font-weight:700;font-size:14px}
+.cl-label{font-size:13px;flex:1}
+.cl-note{font-size:11px;color:var(--text-secondary);margin-left:auto;flex-shrink:0}
+
+/* ===== ACCORDION ===== */
+.accordion{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.accordion-header{padding:14px 20px;background:#f8fafc;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:14px;transition:var(--transition);user-select:none}
+.accordion-header:hover{background:#eef3f8}
+.accordion-header .arrow{transition:var(--transition);font-size:12px}
+.accordion-header.open .arrow{transform:rotate(180deg)}
+.accordion-body{display:none;padding:16px 20px;border-top:1px solid var(--border)}
+.accordion-body.open{display:block}
+
+/* ===== DO-DONT CARDS ===== */
+.do-dont-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.do-dont-grid{grid-template-columns:1fr}}
+.do-card,.dont-card{border-radius:var(--radius);overflow:hidden}
+.do-card{border:2px solid var(--success)}
+.dont-card{border:2px solid var(--danger)}
+.do-card-header{padding:12px 16px;background:#eafaf1;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.dont-card-header{padding:12px 16px;background:#fdedec;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+.do-card-body,.dont-card-body{padding:8px 16px}
+.do-item,.dont-item{padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer}
+.do-item:hover{background:#f0faf4;margin:0 -16px;padding:10px 16px}
+.dont-item:hover{background:#fef5f5;margin:0 -16px;padding:10px 16px}
+.do-item-num,.dont-item-num{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;font-size:11px;font-weight:700;margin-right:8px}
+.do-item-num{background:var(--success);color:#fff}
+.dont-item-num{background:var(--danger);color:#fff}
+.do-item-expand,.dont-item-expand{display:none;margin-top:6px;padding:10px 14px;background:#fff;border-radius:6px;font-size:12px;color:var(--text-secondary);border-left:3px solid var(--primary-light)}
+.do-item-expand.show,.dont-item-expand.show{display:block}
+
+/* ===== SCENARIO CARDS ===== */
+.scenario-card{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:var(--transition)}
+.scenario-card:hover{border-color:var(--primary-light)}
+.scenario-header{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:#fff;font-weight:600;font-size:14px;user-select:none}
+.scenario-header:hover{background:#f8fafc}
+.scenario-num{display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;background:var(--warning);color:#fff;border-radius:50%;font-size:12px;font-weight:700;margin-right:10px;flex-shrink:0}
+.scenario-body{display:none;padding:20px;border-top:1px solid var(--border);background:#fafbfc}
+.scenario-body.open{display:block}
+.scenario-q{background:#fef9e7;border-left:4px solid var(--warning);padding:12px 16px;border-radius:0 6px 6px 0;margin-bottom:14px;font-weight:600;font-size:13px}
+.scenario-a{background:#eafaf1;border-left:4px solid var(--success);padding:14px 16px;border-radius:0 6px 6px 0;font-size:13px;line-height:1.8}
+
+/* ===== TIMELINE ===== */
+.timeline{position:relative;padding:10px 0 10px 32px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:3px;background:var(--border);border-radius:2px}
+.tl-item{position:relative;margin-bottom:24px;padding-left:16px}
+.tl-item::before{content:'';position:absolute;left:-28px;top:4px;width:16px;height:16px;border-radius:50%;background:var(--primary);border:3px solid #fff;box-shadow:0 0 0 2px var(--primary)}
+.tl-item.done::before{background:var(--success);box-shadow:0 0 0 2px var(--success)}
+.tl-title{font-weight:700;font-size:15px;margin-bottom:4px}
+.tl-desc{font-size:13px;color:var(--text-secondary)}
+.tl-tag{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;margin-bottom:6px;font-weight:600}
+.tl-tag.day{background:#eaf4fd;color:var(--info)}
+.tl-tag.week{background:#fef9e7;color:var(--warning)}
+.tl-tag.month{background:#f5eef8;color:#8e44ad}
+.tl-tag.ongoing{background:#eafaf1;color:var(--success)}
+
+/* ===== ALERT BANNER ===== */
+.alert{padding:16px 20px;border-radius:8px;margin-bottom:16px;font-size:13px;display:flex;align-items:flex-start;gap:10px;line-height:1.7}
+.alert-warning{background:#fef9e7;border:1px solid #f9e79f}
+.alert-danger{background:#fdedec;border:1px solid #f5b7b1}
+.alert-info{background:#eaf4fd;border:1px solid #aed6f1}
+.alert-icon{font-size:20px;flex-shrink:0}
+
+/* ===== STATS ROW ===== */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:16px 20px;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-size:32px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:12px;color:var(--text-secondary);margin-top:4px}
+.stat-card.success .stat-num{color:var(--success)}
+.stat-card.warning .stat-num{color:var(--warning)}
+.stat-card.danger .stat-num{color:var(--danger)}
+
+/* ===== FOOTER ===== */
+.footer{text-align:center;padding:24px;color:var(--text-secondary);font-size:12px;border-top:1px solid var(--border);background:var(--card)}
+
+/* ===== QUICK REF CARD ===== */
+.quick-ref{background:linear-gradient(135deg,#fef9e7,#fdf2d0);border:2px solid var(--gold);border-radius:var(--radius);padding:20px 24px}
+.quick-ref h3{color:var(--gold);margin-bottom:12px}
+.quick-ref .formula{font-size:16px;font-weight:700;color:var(--primary);text-align:center;padding:10px;background:rgba(255,255,255,0.6);border-radius:6px;margin-bottom:12px}
+
+/* ===== REPORT TEMPLATE ===== */
+.report-box{background:#fafbfc;border:2px dashed var(--border);border-radius:var(--radius);padding:24px;font-family:"SimSun","KaiTi",serif}
+.report-box h3{text-align:center;font-size:18px;margin-bottom:16px}
+.report-box .stamp{text-align:right;margin-top:20px;font-weight:600}
+
+/* ===== KNOWLEDGE CONSENT TEMPLATE ===== */
+.consent-box{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:24px;font-size:13px}
+.consent-box h3{text-align:center;font-size:16px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--primary)}
+.consent-box .sig-line{display:flex;justify-content:space-between;margin-top:20px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* ===== PRINT ===== */
+@media print{
+  .header,.tab-bar,.sidebar,.btn,.footer,.flow-arrow{display:none!important}
+  .app-layout{display:block}
+  .main-content{padding:0;max-width:100%}
+  .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid;page-break-inside:avoid}
+  .accordion-body,.flow-detail,.scenario-body{display:block!important}
+  .accordion-header,.scenario-header{cursor:default}
+  body{font-size:12px}
+  section{page-break-before:always}
+  section:first-of-type{page-break-before:avoid}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .sidebar{position:fixed;left:-260px;top:124px;z-index:90;height:calc(100vh - 124px);box-shadow:4px 0 20px rgba(0,0,0,0.15)}
+  .sidebar.open{left:0}
+  .main-content{padding:16px}
+  .header{padding:12px 16px}
+  .tab-bar{padding:0 8px}
+  .tab-btn{padding:12px 12px;font-size:13px}
+  .flow-steps{flex-direction:column;align-items:stretch}
+  .flow-arrow{transform:rotate(90deg);padding:0;justify-content:center}
+}
+@media(max-width:600px){
+  .header h1{font-size:15px}
+  .header-logo{font-size:22px}
+  .do-dont-grid{grid-template-columns:1fr}
+  .triple-check{flex-direction:column}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+
+/* ===== MOBILE MENU TOGGLE ===== */
+.menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:4px 8px}
+@media(max-width:900px){.menu-toggle{display:block}}
+
+/* ===== TAB CONTENT ===== */
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ===== TOOLTIP / HELPER ===== */
+.section-progress{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary)}
+.section-progress-bar{width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.section-progress-fill{height:100%;background:var(--success);border-radius:3px;transition:width 0.4s}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-left">
+    <span class="header-logo">🏥</span>
+    <div>
+      <h1>辽宁中医嘉和医院 · 定点自查可视化系统</h1>
+      <div class="header-sub">医保合规自查自纠 · 穴位埋线门诊自查</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="progress-mini">
+      <span>📋 总进度</span>
+      <div class="progress-mini-bar"><div class="progress-mini-fill" id="globalProgressFill" style="width:0%"></div></div>
+      <span id="globalProgressText">0%</span>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="resetAll()" title="重置所有勾选">🔄 重置</button>
+    <button class="btn btn-outline btn-sm" onclick="window.print()" title="打印当前文档">🖨️ 打印</button>
+    <button class="btn btn-primary btn-sm" onclick="expandAll()">📖 全部展开</button>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  </div>
+</header>
+
+<!-- ===== TAB BAR ===== -->
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="doc1" onclick="switchTab('doc1')">📊 医保迎检自查流程<span class="tab-badge">9大模块</span></button>
+  <button class="tab-btn" data-tab="doc2" onclick="switchTab('doc2')">💉 穴位埋线门诊自查<span class="tab-badge">11章</span></button>
+</nav>
+
+<!-- ===== LAYOUT ===== -->
+<div class="app-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">📑 文档导航</div>
+    <ul class="sidebar-nav" id="sidebarNav"></ul>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <!-- Content filled by JS -->
+  </main>
+</div>
+
+<footer class="footer">
+  辽宁中医嘉和医院 医保办公室 · 版本 V1.0 · 2025年6月编制 · 依据国家医保局医保函〔2025〕2号及辽宁省医保局相关文件
+</footer>
+
+<script>
+// ============================================================
+// DATA: Document 1 - 医保迎检自查
+// ============================================================
+const DOC1 = {
+  id: 'doc1',
+  title: '医保迎检自查流程',
+  sections: []
+};
+
+// Helper to build data structure inline
+(function buildDoc1() {
+  // Section 1: 迎检全流程
+  DOC1.sections.push({
+    id: 'flow',
+    title: '📊 迎检全流程可视化',
+    icon: '🔄',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">🔄</span>五阶迎检全流程</span></div>
+        <div class="flow-steps">
+          ${['1.飞检前自查','2.飞检组入场','3.现场应对','4.检查收尾','5.整改闭环'].map((t,i,a)=>
+            (i>0?`<div class="flow-arrow">→</div>`:'')+
+            `<div class="flow-step" onclick="toggleFlowDetail(this)"><div class="flow-step-card"><div class="flow-step-num">${i+1}</div><div class="flow-step-title">${t.split('.')[1]}</div><div class="flow-step-desc">${['问题清单·数据筛查·病历复核·全员培训','指定迎检室·资料分区·人员分工·态度端正','十要话术·科室响应·证据链三段论·避开十不要','当场领问题·记录意见·表达感谢·主动问整改','建整改台账·退违规资金·制度修订·回头看验收'][i]}</div></div>
+            <div class="flow-detail"><ul>${['<li>获取九大领域问题清单+辽宁省本地化清单</li><li>明确自查时间范围(近2年)</li><li>三合一核对：病历+收费+医嘱一致性</li><li>全员签署《医保合规责任书》</li>','<li>指定迎检会议室(通风明亮座位充足)</li><li>资料分区摆放：左区(制度)中区(病历)右区(整改)</li><li>人员就位：院长/医保办/财务/药剂/各科主任5分钟到位</li><li>茶水纸笔计算器备齐</li>','<li>应答公式=政策依据+原始记录+逻辑关联</li><li>十要：先接锅递办法/资料触手可及/笑着感谢/喊对人不硬扛/说大白话/递台阶/递整改/攥细节/等人说完/记着感谢</li><li>十不要：不说一直这么干/不说不知道/不推其他科室/不说没办法/不皱眉抱胳膊/不藏资料/不抢话/不空口敷衍/不翻旧账/不关起门谈</li>','<li>当场认领问题，不辩解</li><li>详细记录检查方口头提出的所有问题</li><li>表达感谢："您帮我们堵了大漏洞"</li><li>主动询问整改方向</li>','<li>当日总结会：逐条认领，明确责任人</li><li>3日内：提交书面整改方案+退费清单+银行凭证</li><li>1周内：全院通报+针对性培训+制度修订</li><li>1月内：HIS增加预警规则+回头看验收</li><li>长期：每月科室自查→每季度全院复查→医保合规纳入绩效</li>'].map(s=>s).join('')}</ul></div>
+            </div>`
+          ).join('')}
+        </div>
+      </div>
+    `
+  });
+
+  // Section 2: 组织架构
+  DOC1.sections.push({
+    id: 'org',
+    title: '🏗️ 专项工作组组织架构',
+    icon: '🏗️',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">🏗️</span>飞检自查专项工作组</span></div>
+        <div class="org-chart">
+          <div class="org-node">👤 院长 → 专项工作组组长</div>
+          <div class="org-arrow">▼</div>
+          <div class="org-row">
+            <div class="org-dept"><div class="org-dept-name">🏥 医保办</div><div class="org-dept-role">统筹协调·政策解读·对外联络</div></div>
+            <div class="org-dept"><div class="org-dept-name">📋 医务科</div><div class="org-dept-role">病历审查·诊疗规范检查</div></div>
+            <div class="org-dept"><div class="org-dept-name">💊 药剂科</div><div class="org-dept-role">中药饮片进销存·处方审查</div></div>
+            <div class="org-dept"><div class="org-dept-name">💰 财务科</div><div class="org-dept-role">收费核对·违规金额核算</div></div>
+          </div>
+          <div class="org-row">
+            <div class="org-dept"><div class="org-dept-name">🩺 护理部</div><div class="org-dept-role">护理记录·治疗执行记录核查</div></div>
+            <div class="org-dept"><div class="org-dept-name">💻 信息科</div><div class="org-dept-role">HIS系统数据提取·智能审核配置</div></div>
+            <div class="org-dept"><div class="org-dept-name">👨‍⚕️ 各临床科室主任</div><div class="org-dept-role">科室自查第一责任人</div></div>
+          </div>
+        </div>
+      </div>
+    `
+  });
+
+  // Section 3: 三合一核对
+  DOC1.sections.push({
+    id: 'triple',
+    title: '🔍 三合一数据核对流程',
+    icon: '🔍',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">🔍</span>病历·收费·医嘱 三合一核对</span><span class="card-badge badge-warning">核心方法</span></div>
+        <div class="triple-check">
+          <div class="tc-box">📝 病历记录<br><small>(医嘱/病程)</small></div>
+          <div class="tc-box">📋 收费清单<br><small>(结算明细)</small></div>
+          <div class="tc-center">
+            <div class="tc-match">三者是否一致?</div>
+            <div class="tc-result">
+              <span class="tc-pass">✓ 一致 → 通过</span>
+              <span class="tc-fail">✗ 不一致 → 标记问题项 → 进入整改台账</span>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-warning" style="margin-top:16px">
+          <span class="alert-icon">⚠️</span>
+          <div><strong>高频筛查点：</strong><br>
+          · <b>重复收费</b>：同一项目多次计费（温针+普通针刺同时收费）<br>
+          · <b>分解收费</b>：一个项目拆成多个（全腹CT拆上中下三段）<br>
+          · <b>串换项目</b>：A项目按B项目收费（微波串换红外线）<br>
+          · <b>超标准收费</b>：超过医保限价或计价单位错误<br>
+          · <b>过度诊疗</b>：无指征检查、超频次治疗</div>
+        </div>
+      </div>
+    `
+  });
+
+  // Section 4: 分科室自查清单
+  DOC1.sections.push({
+    id: 'dept-check',
+    title: '🏥 分科室专项自查清单',
+    icon: '🏥',
+    render: () => {
+      const depts = [
+        {
+          name: '针灸科 / 推拿科 / 康复科',
+          icon: '💉',
+          items: [
+            '温针、电针、普通针刺是否叠加收费','灸法、隔物灸、督灸是否同时计费',
+            '推拿治疗等级(大/中/小)与收费是否匹配','小针刀是否与关节松解术重复收费',
+            '治疗记录单是否逐次逐项记录完整','单日治疗项目数是否超出常规','操作人员资质是否合规'
+          ]
+        },
+        {
+          name: '中药房 / 煎药室',
+          icon: '💊',
+          items: [
+            '药食同源单味饮片（枸杞/红枣等）是否单独纳入医保','中药饮片加成比例是否 ≤25%',
+            '进销存台账与实物是否一致（全品种盘点）','处方四签名（医师+审方+调配+核对）是否完整',
+            '贵细中药（红参/西洋参等）是否在医保支付限定内','中药颗粒是否存在串换编码',
+            '中药熏蒸/热奄包是否重复收取饮片费用'
+          ]
+        },
+        {
+          name: '住院部',
+          icon: '🛏️',
+          items: [
+            '入院指征是否明确（排查低标准入院）','是否存在分解住院（同一疾病短期内二次入院）',
+            '挂床住院排查（在院人数与每日实际在院一致）','出院诊断：中医辨证+西医诊断是否完整',
+            '中医四诊记录（望闻问切）是否每份病历都齐全','知情同意书是否签名完整'
+          ]
+        },
+        {
+          name: '检验科 / 影像科',
+          icon: '🔬',
+          items: [
+            '检验项目是否有适应症支持','是否存在打包收费（大生化全套未分列明细）',
+            '设备是否有生产许可证+合格证+强检记录','检验报告与收费项目是否一一对应'
+          ]
+        }
+      ];
+      return `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🏥</span>分科室专项自查</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-dept-check"></span></span><span id="prog-dept-check-text">0%</span></span></div>
+        ${depts.map((d,i) => `
+          <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)"><span>${d.icon} ${d.name}（${d.items.length}项）</span><span class="arrow">▼</span></div>
+            <div class="accordion-body"><ul class="checklist">${d.items.map((item,j) => renderCheckItem(`d1-dept-${i}-${j}`,item)).join('')}</ul></div>
+          </div>`).join('')}
+      </div>`;
+    }
+  });
+
+  // Section 5: 十要十不要
+  DOC1.sections.push({
+    id: 'dodont',
+    title: '⚖️ 迎检对话黄金法则 · 十要十不要',
+    icon: '⚖️',
+    render: () => {
+      const dos = [
+        ['先接"锅"再递办法','"您说得对，这是我们漏了，马上让医生过来补"'],
+        ['资料触手可及','医保目录放抽屉第一层'],
+        ['笑着说"您提醒得好"','用配合姿态回应质疑'],
+        ['喊对人，不硬扛','"我马上叫张姐过来，5分钟到"'],
+        ['说大白话','不用术语绕圈子，直白解释'],
+        ['主动递台阶','"您能给我们指个整改方向吗？3天内交方案"'],
+        ['主动递整改记录','展示之前问题整改前后对比'],
+        ['攥着细节说话','用具体凭证编号、时间戳支撑'],
+        ['等人说完再接话','不打断，充分理解问题'],
+        ['记着感谢','"您帮我们堵了大漏洞，欢迎再来指导！"']
+      ];
+      const donts = [
+        ['"我们一直这么做的"','→ 马上改，您监督'],
+        ['"我不知道"','→ 马上叫负责人来'],
+        ['"这是其他科室的事"','→ 我马上联系，带记录过来'],
+        ['"我也没办法"','→ 马上补，这是补签计划'],
+        ['皱眉抱胳膊（肢体语言）','→ 双手搭桌，身体微前倾'],
+        ['藏资料找借口','→ 马上让档案室送来'],
+        ['抢话打断','→ 等人说完再递培训记录'],
+        ['"我们会改的"（空口敷衍）','→ 明天开会，后天执行'],
+        ['翻旧账"上次你们也没说"','→ 这次提醒了马上改'],
+        ['关起门单独谈','→ 去会议室，让大家一起听']
+      ];
+      return `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">⚖️</span>迎检对话黄金法则</span></div>
+        <div class="alert alert-info" style="margin-bottom:16px"><span class="alert-icon">💡</span><div><strong>应答公式 = 政策依据（文号/页码）+ 原始记录（病历/签字）+ 逻辑关联</strong></div></div>
+        <div class="do-dont-grid">
+          <div class="do-card">
+            <div class="do-card-header">✅ 十要（积极引导）</div>
+            <div class="do-card-body">${dos.map((d,i) => `
+              <div class="do-item" onclick="this.querySelector('.do-item-expand').classList.toggle('show')">
+                <span class="do-item-num">${i+1}</span><strong>${d[0]}</strong>
+                <div class="do-item-expand">💬 ${d[1]}</div>
+              </div>`).join('')}</div>
+          </div>
+          <div class="dont-card">
+            <div class="dont-card-header">❌ 十不要（绝对避开）</div>
+            <div class="dont-card-body">${donts.map((d,i) => `
+              <div class="dont-item" onclick="this.querySelector('.dont-item-expand').classList.toggle('show')">
+                <span class="dont-item-num">${i+1}</span><strong>${d[0]}</strong>
+                <div class="dont-item-expand">🔄 应对话术：${d[1]}</div>
+              </div>`).join('')}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+  });
+
+  // Section 6: 六类高频质疑场景
+  DOC1.sections.push({
+    id: 'scenarios',
+    title: '🎯 六类高频质疑场景 · 标准应答',
+    icon: '🎯',
+    render: () => {
+      const scenes = [
+        {
+          title: '质疑针灸项目重复收费',
+          q: '飞检组："温针和普通针刺为什么同时收费？"',
+          a: '应答：我们核查一下……（查系统）您指出的这例，温针项目编码XX已包含针刺操作，不应同时计普通针刺，是我们收费录入的理解偏差。马上让针灸科逐条核对全部温针收费记录，多收的今天核算金额，3天内退费。这是我们的整改承诺书模板。'
+        },
+        {
+          title: '质疑推拿治疗等级',
+          q: '飞检组："这个患者为什么收\'大\'推拿费用？"',
+          a: '应答：我们看一下治疗记录……（拿记录单）根据辽宁省医疗服务价格手册第X页，推拿治疗骨关节炎(大)对应受累3个及以上关节部位。该患者病历记录显示肩、肘、腕三关节均受累，推拿时长45分钟，符合(大)的标准。这是病历、记录单、价格手册对应页的复印件。'
+        },
+        {
+          title: '质疑中药饮片加成',
+          q: '飞检组："中药饮片怎么定价？加成多少？"',
+          a: '应答：我院严格按国家规定执行中药饮片加成≤25%。这是本月采购发票（展示），以当归为例，采购价100元/kg，零售价125元/kg，加成25%。这是我们上个月的进销存盘点表，账实相符。您可以随机抽3个品种，我们现场称重核对。'
+        },
+        {
+          title: '质疑入院必要性（低标准入院）',
+          q: '飞检组："这个患者的情况是不是门诊就能处理？"',
+          a: '应答：我调一下病历……（展示）该患者入院时腰椎间盘突出急性发作，VAS疼痛评分8分，无法站立行走，伴有下肢放射痛。属于中医\'腰痹急症\'范畴，需住院系统治疗（针灸+推拿+中药熏蒸+汤剂综合方案）。入院记录、疼痛评估表、知情同意书都在这。'
+        },
+        {
+          title: '质疑中医理疗频次',
+          q: '飞检组："为什么一天做这么多理疗项目？"',
+          a: '应答：这个病例我解释一下……（拿出治疗方案）患者诊断\'中风后遗症\'，辨证属气虚血瘀证。治疗方案：针刺(醒脑开窍法)+推拿(疏通经络)+灸法(温阳补气)。三个项目作用机理不同，针刺醒脑、推拿通络、灸法补气，属于辨证施治的综合方案，各有适应症，非重复治疗。这是疗程计划书和治疗记录，每次都有患者签字。'
+        },
+        {
+          title: '质疑项目编码串换',
+          q: '飞检组："这个收费编码对应的项目和你实际操作不一致。"',
+          a: '应答：您提醒得对，我马上核实……（查系统）这个编码XX对应的是红外线治疗，实际我们做的是微波治疗（编码YY）。由于两个项目在系统中邻近排列，操作人员选错了。这是我们录入人员的操作失误，马上更正编码，已发生的错误收费核对金额后全额退回。同时加强收费员培训。'
+        }
+      ];
+      return `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🎯</span>六类高频质疑 · 标准应答话术</span></div>
+        ${scenes.map((s,i) => `
+          <div class="scenario-card">
+            <div class="scenario-header" onclick="toggleScenario(this)">
+              <span><span class="scenario-num">${i+1}</span>${s.title}</span><span class="arrow">▼</span>
+            </div>
+            <div class="scenario-body">
+              <div class="scenario-q">🔴 ${s.q}</div>
+              <div class="scenario-a">🟢 ${s.a}</div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    }
+  });
+
+  // Section 7: 整改闭环时间线
+  DOC1.sections.push({
+    id: 'timeline',
+    title: '📅 检查收尾→整改闭环时间线',
+    icon: '📅',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">📅</span>整改闭环时间线</span></div>
+        <div class="timeline">
+          <div class="tl-item done"><span class="tl-tag day">检查当日</span><div class="tl-title">检查结束总结</div><div class="tl-desc">"非常感谢各位专家的指导"· 列出所有口头问题逐条认领 · 明确责任人和整改时限</div></div>
+          <div class="tl-item"><span class="tl-tag day">3日内</span><div class="tl-title">提交正式整改方案</div><div class="tl-desc">书面整改方案 + 退费清单 + 银行退费凭证</div></div>
+          <div class="tl-item"><span class="tl-tag week">1周内</span><div class="tl-title">全院通报+培训+制度修订</div><div class="tl-desc">通报检查结果 · 开展针对性培训 · 修订完善相关管理制度</div></div>
+          <div class="tl-item"><span class="tl-tag month">1个月内</span><div class="tl-title">系统升级+回头看验收</div><div class="tl-desc">HIS系统增加自动拦截/预警规则 · 完成全院"回头看"验收</div></div>
+          <div class="tl-item"><span class="tl-tag ongoing">长期持续</span><div class="tl-title">常态化自查机制</div><div class="tl-desc">每月一次科室自查 → 每季度一次全院复查 → 医保合规纳入绩效考核 → 固化经验为操作手册</div></div>
+        </div>
+      </div>
+    `
+  });
+
+  // Section 8: 附录 - 自查清单
+  DOC1.sections.push({
+    id: 'appendix-checklist',
+    title: '📋 附录一：中医特色项目自查清单',
+    icon: '📋',
+    render: () => {
+      const cats = {
+        '一、针灸类': ['温针是否与普通针刺同时收费？','电针是否与普通针刺同时收费？','头皮针+手指点穴+体针是否叠加收费？','针灸治疗记录单是否有逐次操作记录？','操作记录是否有患者签字确认？','操作医师是否持有中医执业资质？','单日同患者针灸类项目是否超过2种？'],
+        '二、推拿/手法类': ['推拿等级(大/中/小)与收费项目是否一致？','推拿治疗单是否记录部位+手法+时长？','是否存在同部位多项推拿重复收费？','小针刀是否与关节粘连松解术重复收费？','手指点穴是否与推拿治疗重复收费？','推拿记录与实际操作是否完全一致？'],
+        '三、灸法/理疗类': ['灸法/隔物灸/督灸是否同时计费（应只收一种）？','中药熏蒸/热奄包是否重复收取中药饮片费用？','艾灸耗材是否单独计费（应包含在治疗费中）？','理疗设备是否有生产许可证+合格证+强检记录？'],
+        '四、中药类': ['药食同源单味饮片是否纳入医保结算？','中药饮片加成比例是否 ≤25%？','进销存台账与实物是否一致？','处方是否有医师+审方+调配+核对四签名？','贵细中药是否有超医保支付限制？','中药颗粒是否存在串换编码？','是否存在超量/超品种/跨科开药？'],
+        '五、病历文书类': ['中医四诊记录（望闻问切）是否完整？','辨证分型是否与治疗项目匹配？','知情同意书是否签名齐全？','病程记录是否按时书写并签名？'],
+        '六、住院管理类': ['入院指征是否充分（排查低标准入院）？','是否存在超期住院无合理说明？','出院诊断是否中西医双诊断完整？','中医日间病房：离院记录+知情告知是否齐全？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">📋</span>中医特色项目自查清单</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-app1"></span></span><span id="prog-app1-text">0%</span></span><span class="card-badge badge-info">每周自查</span></div>`;
+      let idx = 0;
+      for(const [cat,items] of Object.entries(cats)){
+        html += `<h4 style="margin:12px 0 8px;color:var(--primary)">${cat}</h4><ul class="checklist">${items.map(item => renderCheckItem(`d1-app1-${idx++}`,item)).join('')}</ul>`;
+      }
+      html += `<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:13px"><strong>科主任签字：</strong>_______________ &nbsp;&nbsp;&nbsp; <strong>医保办复核：</strong>_______________</div></div>`;
+      return html;
+    }
+  });
+
+  // Section 9: 迎检速查卡 + 报告模板 + 时间轴
+  DOC1.sections.push({
+    id: 'appendix-ref',
+    title: '📇 附录二三四：速查卡·报告模板·时间轴',
+    icon: '📇',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">📇</span>迎检速查卡（可打印随身）</span></div>
+        <div class="quick-ref">
+          <div class="formula">📐 黄金公式：应答 = 政策依据 + 原始记录 + 逻辑关联</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div><strong>🟢 三秒反应</strong><br>①先点头认领<br>②喊对负责人<br>③拿证据说话</div>
+            <div><strong>🔴 绝对禁语</strong><br>✘ "一直这么做"<br>✘ "我不知道"<br>✘ "其他科室的事"<br>✘ "我也没办法"</div>
+          </div>
+          <div style="margin-top:12px"><strong>🟡 标准回应：</strong>"您提醒得对，我马上核实" | "我让XX过来，很快到" | "您看这是相关记录/文件"</div>
+          <div style="margin-top:8px"><strong>🟢 结束语：</strong>"谢谢您帮我们发现漏洞，欢迎再来"</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">📄</span>2025年自查自纠报告模板</span></div>
+        <div class="report-box">
+          <h3>辽宁中医嘉和医院<br>2025年使用医保基金自查自纠工作报告</h3>
+          <p>×××医疗保障局：</p>
+          <p><strong>一、基本情况</strong><br>辽宁中医嘉和医院为民营中医医院，设有中医内科、中医外科、针灸科、推拿科、康复科、中医骨伤科等临床科室。在岗医师××人（中医类别××人），护士××人，药师××人，治疗师××人。</p>
+          <p><strong>二、自查自纠情况</strong><br>（一）组织领导（简述专项工作组组成、工作方式、覆盖范围）<br>（二）发现问题（按九大领域+中医特色领域分列，附明细表）<br>（三）违规金额汇总：共计违规使用医保基金×××元，已全额退回（附银行凭证）。</p>
+          <p><strong>三、整改措施</strong><br>1.退回违规资金 2.修订相关管理制度 3.开展全员医保政策培训 4.HIS系统升级预警规则 5.建立常态化自查机制</p>
+          <p><strong>四、总结与长效承诺</strong><br>（阐述将医保合规与绩效考核挂钩、信息化预警等长效机制）</p>
+          <div class="stamp">辽宁中医嘉和医院<br>2025年______月______日</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">🔔</span>2025年医保工作关键时间轴</span></div>
+        <div class="timeline">
+          <div class="tl-item done"><span class="tl-tag month">2025年1月</span><div class="tl-title">国家医保局启动自查自纠</div><div class="tl-desc">发布《关于开展2025年定点医药机构违法违规使用医保基金自查自纠工作的通知》</div></div>
+          <div class="tl-item done"><span class="tl-tag month">2月-3月</span><div class="tl-title">定点机构完成自查+退回基金</div><div class="tl-desc">全面自查自纠，主动退回违规资金</div></div>
+          <div class="tl-item"><span class="tl-tag month">4月起</span><div class="tl-title">"四不两直"飞行检查开始</div><div class="tl-desc">不发通知、不打招呼、不听汇报、不用陪同接待，直奔基层、直插现场</div></div>
+          <div class="tl-item"><span class="tl-tag ongoing">全年</span><div class="tl-title">各地联合检查+专项</div><div class="tl-desc">⚠ 自查认真、主动退费 = 从轻处理 | ⚠ 敷衍塞责、隐瞒不报 = 从重处理+公开曝光+记分管理</div></div>
+        </div>
+      </div>
+    `
+  });
+})();
+
+// ============================================================
+// DATA: Document 2 - 穴位埋线门诊自查
+// ============================================================
+const DOC2 = {
+  id: 'doc2',
+  title: '穴位埋线门诊自查手册',
+  sections: []
+};
+
+(function buildDoc2() {
+  // 自查流程图
+  DOC2.sections.push({
+    id: 'mt-flow',
+    title: '🔄 穴位埋线门诊自查流程',
+    icon:'🔄',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">🔄</span>五步自查流程</span></div>
+        <div class="flow-steps">
+          ${['1.资质核查','2.收费核查','3.操作规范','4.文书规范','5.闭环整改'].map((t,i,a)=>
+            (i>0?`<div class="flow-arrow">→</div>`:'')+
+            `<div class="flow-step" onclick="toggleFlowDetail(this)"><div class="flow-step-card"><div class="flow-step-num">${i+1}</div><div class="flow-step-title">${t.split('.')[1]}</div><div class="flow-step-desc">${['机构许可·医师资格·备案完成·培训证书','按次收费·材料不另收·不超部位数·不串换编码','适应症审核·禁忌症排查·无菌操作·院感防控','知情同意书·门诊登记·治疗记录·效果随访','建立台账·逐项整改·回头看·制度修订'][i]}</div></div>
+            <div class="flow-detail"><ul>${[
+              '<li>机构许可证/备案证有效期内</li><li>医师中医类别执业资格+埋线培训证书</li><li>穴位埋线技术已完成卫健委备案</li><li>治疗室独立、符合标准，配急救设备</li>',
+              '<li>统一按"次·日"收费（禁止按穴位个数）</li><li>埋线针/线体不另行单独收费</li><li>不与普通针刺/温针/电针叠加收费</li><li>不存在串换项目编码</li>',
+              '<li>严格掌握适应症（慢性功能性疾病/疼痛/代谢/美容）</li><li>治疗前排查禁忌症（皮肤破损/凝血障碍/孕妇等）</li><li>执行GB/T 21709.10-2008操作流程</li><li>使用一次性无菌器具</li>',
+              '<li>知情同意书100%签署（含风险告知）</li><li>患者信息登记台账完整</li><li>每次治疗有操作记录（穴位/线体/时长/反应）</li><li>中医辨证记录完整（理法方穴术）</li>',
+              '<li>建立问题台账，逐项整改</li><li>每月自查→医保办复核→存档</li><li>每季度回头看验收</li><li>修订完善管理制度</li>'
+            ][i].split('</li>').map(s=>s+'</li>').join('')}</ul></div></div>`
+          ).join('')}
+        </div>
+      </div>
+    `
+  });
+
+  // 重大变更提示
+  DOC2.sections.push({
+    id: 'mt-changes',
+    title: '⚠️ 2025年重大收费变更',
+    icon:'⚠️',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">⚠️</span>2025年收费模式重大变更提示</span><span class="card-badge badge-danger">必须执行</span></div>
+        <div class="do-dont-grid">
+          <div class="dont-card">
+            <div class="dont-card-header">❌ 旧模式 · 已废止</div>
+            <div class="dont-card-body" style="padding:12px 16px">
+              <div style="font-size:13px">✘ 按穴位个数收费<br>✘ 埋线材料单独收费<br>✘ 穴位埋线与常规针刺叠加收费<br>✘ 特殊穴位不限数量</div>
+            </div>
+          </div>
+          <div class="do-card">
+            <div class="do-card-header">✅ 新模式 · 必须执行</div>
+            <div class="do-card-body" style="padding:12px 16px">
+              <div style="font-size:13px">✓ 统一按"次·日"收费<br>✓ 埋线针、线体计入基本物耗<br>✓ 按最高项目标准计费<br>✓ 特殊穴位严格限制数量</div>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-danger" style="margin-top:12px">
+          <span class="alert-icon">📋</span>
+          <div><strong>核心依据：</strong>2025年全国中医针法类价格项目统一规范 + 辽宁省中医特殊疗法类价格项目通知（辽医保发〔2025〕36号）</div>
+        </div>
+      </div>
+    `
+  });
+
+  // 资质与备案
+  DOC2.sections.push({
+    id: 'mt-qual',
+    title: '📜 资质与备案自查',
+    icon:'📜',
+    render: () => {
+      const groups = {
+        '机构资质': ['《医疗机构执业许可证》/《诊所备案证》是否在有效期内？','是否核准登记"中医科/针灸科/中西医结合科"诊疗科目？','穴位埋线技术是否已向所在地县级卫健委备案？','备案范围与实际开展范围是否一致？','是否存在出租/承包科室？'],
+        '人员资质': ['操作医师是否具有中医类别执业资格？','是否取得《医师执业证书》且执业地点在本院？','是否完成系统穴位埋线专业培训（≥规定学时）？','是否持有有效的穴位埋线培训证书/结业证明？','培训证书是否在有效期内（如需定期复训）？','是否掌握适应症、禁忌症及不良反应处置流程？','是否完成医保医师备案？','是否存在非卫生技术人员从事穴位埋线操作？'],
+        '设施环境': ['是否有独立、符合标准的治疗室/操作间？','治疗室空气消毒是否符合医疗机构消毒技术规范？','是否有紫外线消毒设备且每日按时消毒（有记录）？','是否配备急救车/急救药品（肾上腺素、地塞米松等）？','是否配备吸氧设备？','是否配备血压计、体温计等基本检查设备？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">📜</span>资质与备案自查</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-qual"></span></span><span id="prog-mt-qual-text">0%</span></span></div>`;
+      let idx = 0;
+      for(const [g,items] of Object.entries(groups)){
+        html += `<div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)"><span>📋 ${g}（${items.length}项）</span><span class="arrow">▼</span></div><div class="accordion-body"><ul class="checklist">${items.map(item => renderCheckItem(`d2-qual-${idx++}`,item)).join('')}</ul></div></div>`;
+      }
+      return html+'</div>';
+    }
+  });
+
+  // 收费与医保合规
+  DOC2.sections.push({
+    id: 'mt-fee',
+    title: '💰 收费与医保合规自查',
+    icon:'💰',
+    render: () => {
+      const groups = {
+        '计价单位与频次': ['穴位埋线是否统一按"次·日"收费？（禁止按穴位个数）','单日穴位埋线是否仅收费1次？','所选用的收费编码是否与辽宁省最新价格项目映射一致？'],
+        '耗材收费': ['埋线针（套管针/埋线针）是否单独收费？（应包含在治疗费中）','可吸收缝线（线体）是否单独收费？（应包含在基本物耗中）','局部麻醉药是否单独收费？（应包含在项目价格中）'],
+        '叠加收费': ['穴位埋线与常规针刺同次操作时，是否只收一种费用？','穴位埋线与温针/电针是否叠加收费？（禁止）'],
+        '串换与分解': ['是否存在将穴位埋线串换为其他高价项目收费？','是否将一次埋线治疗分解为多次收费？（如分部位拆分）'],
+        '医保支付与公示': ['医保结算患者是否在支付限定范围内？','自费患者是否做好费用告知并签署自费确认书？','穴位埋线收费标准是否公示并明码标价？','公示价格与实际收费是否一致？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">💰</span>收费与医保合规自查</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-fee"></span></span><span id="prog-mt-fee-text">0%</span></span></div>`;
+      let idx = 0;
+      for(const [g,items] of Object.entries(groups)){
+        html += `<div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)"><span>💰 ${g}（${items.length}项）</span><span class="arrow">▼</span></div><div class="accordion-body"><ul class="checklist">${items.map(item => renderCheckItem(`d2-fee-${idx++}`,item)).join('')}</ul></div></div>`;
+      }
+      html += `<div class="alert alert-danger" style="margin-top:12px"><span class="alert-icon">🚨</span><div><strong>警示案例：</strong>某门诊部穴位埋线按穴位个数收费，一次治疗收取8个穴位费用，且将埋线针和线体另行单独收费。被医保局查处：①超标准收费 ②重复收费 → 追回全部违规基金+约谈负责人+责令整改+公开通报</div></div>`;
+      return html+'</div>';
+    }
+  });
+
+  // 操作规范
+  DOC2.sections.push({
+    id: 'mt-op',
+    title: '🩺 操作规范自查',
+    icon:'🩺',
+    render: () => {
+      const groups = {
+        '适应症审核': ['是否严格掌握穴位埋线适应症？（慢性功能性疾病、疼痛、代谢性疾病、美容等）','是否存在无适应症开展穴位埋线？（如普通感冒等）'],
+        '禁忌症排查（治疗前是否排查以下禁忌症？）': ['皮肤局部有溃疡/破损/炎症','糖尿病吸修复功能障碍','凝血功能障碍/出血倾向','过敏体质（对线材过敏）','孕妇（小腹部/腰骶部）','5岁以下儿童','活动期肺结核/骨结核','严重心脏病未控制','月经期（慎用）'],
+        '操作流程': ['是否严格执行GB/T 21709.10-2008操作流程（三步法）？','是否使用一次性无菌埋线器具？','进针深度是否规范（埋植在肌层或皮下组织，不伤内脏/大血管/神经干）？','是否有线头外露情况？（禁止）','是否在关节腔内埋线？（禁止）','操作完毕后是否用无菌敷料包扎保护创口？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🩺</span>操作规范自查（GB/T 21709.10-2008）</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-op"></span></span><span id="prog-mt-op-text">0%</span></span></div>`;
+      let idx = 0;
+      for(const [g,items] of Object.entries(groups)){
+        html += `<div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)"><span>🩺 ${g}（${items.length}项）</span><span class="arrow">▼</span></div><div class="accordion-body"><ul class="checklist">${items.map(item => renderCheckItem(`d2-op-${idx++}`,item)).join('')}</ul></div></div>`;
+      }
+      return html+'</div>';
+    }
+  });
+
+  // 院感与无菌操作
+  DOC2.sections.push({
+    id: 'mt-sterile',
+    title: '🧫 院感与无菌操作自查',
+    icon:'🧫',
+    render: () => {
+      const groups = {
+        '手卫生': ['操作前后是否按"六步洗手法"洗手？','洗手后是否使用75%乙醇或手消毒剂消毒双手？','接触患者血液/体液时是否戴手套？','是否佩戴无菌手套操作（接触破损皮肤时）？'],
+        '皮肤消毒': ['消毒面积是否 ≥5cm×5cm？','是否以穴位为中心由内向外涂擦2遍？','消毒棉球是否一穴一换（禁止同一棉球擦两穴）？'],
+        '器械管理': ['埋线针/套管针是否为一次性使用？（禁止复用）','一次性无菌针具打开后是否在4小时内使用？（超时弃用）','一次性用品使用后是否按医疗废物分类收集？','可吸收缝线包装是否完整且在有效期内？'],
+        '环境消毒': ['治疗室是否有每日紫外线消毒记录？','治疗台/治疗床是否每次治疗后消毒？'],
+        '医疗废物': ['废弃针具是否投入利器盒？','医疗废物转运记录是否完整？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🧫</span>院感与无菌操作（高频扣分项）</span><span class="card-badge badge-danger">高频扣分</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-sterile"></span></span><span id="prog-mt-sterile-text">0%</span></span></div>`;
+      let idx = 0;
+      for(const [g,items] of Object.entries(groups)){
+        html += `<div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)"><span>🧫 ${g}（${items.length}项）</span><span class="arrow">▼</span></div><div class="accordion-body"><ul class="checklist">${items.map(item => renderCheckItem(`d2-sterile-${idx++}`,item)).join('')}</ul></div></div>`;
+      }
+      return html+'</div>';
+    }
+  });
+
+  // 医疗文书
+  DOC2.sections.push({
+    id: 'mt-doc',
+    title: '📝 医疗文书规范自查',
+    icon:'📝',
+    render: () => {
+      const groups = {
+        '门诊登记': ['是否建立穴位埋线就诊人员信息登记台账？','登记内容是否包括：姓名/性别/年龄/联系方式/诊断/治疗日期/治疗部位/操作医师？'],
+        '知情同意': ['治疗前是否与患者签署《穴位埋线知情同意书》？','知情同意书是否包含：适应症说明/操作过程/可能风险/术后注意事项/不良反应/替代方案？','知情同意书是否有患者亲笔签名+日期？','知情同意书是否有医师签名？'],
+        '治疗记录': ['每次治疗是否有操作记录？','操作记录是否包含：治疗日期/穴位名称及数量/线体类型/操作时长/患者反应/术后指导？','操作记录是否有操作医师签字？','中医辨证记录是否完整？（理/法/方/穴/术）'],
+        '收费凭证': ['收费清单与实际治疗项目是否一致？','收费日期与治疗日期是否吻合？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">📝</span>医疗文书规范</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-doc"></span></span><span id="prog-mt-doc-text">0%</span></span></div>`;
+      let idx = 0;
+      for(const [g,items] of Object.entries(groups)){
+        html += `<div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)"><span>📝 ${g}（${items.length}项）</span><span class="arrow">▼</span></div><div class="accordion-body"><ul class="checklist">${items.map(item => renderCheckItem(`d2-doc-${idx++}`,item)).join('')}</ul></div></div>`;
+      }
+      return html+'</div>';
+    }
+  });
+
+  // 知情同意与患者管理
+  DOC2.sections.push({
+    id: 'mt-consent',
+    title: '🤝 知情同意与患者管理',
+    icon:'🤝',
+    render: () => {
+      const items = ['术后是否告知患者注意事项？（防水/防感染/饮食等）','是否告知正常反应与异常反应的区别？','是否告知复诊时间及异常情况就医指引？','是否对术后患者进行随访？（建议术后1-3天电话随访）','随访记录是否留存？','是否存在夸大宣传疗效的情况？（禁止"包治百病"等表述）','宣传材料是否经审批？（广告需取得中医医疗广告审查文件）'];
+      return `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🤝</span>患者告知与管理</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-consent"></span></span><span id="prog-mt-consent-text">0%</span></span></div><ul class="checklist">${items.map((item,i) => renderCheckItem(`d2-consent-${i}`,item)).join('')}</ul></div>`;
+    }
+  });
+
+  // 不良反应应急预案
+  DOC2.sections.push({
+    id: 'mt-emergency',
+    title: '🚨 不良反应应急预案检查',
+    icon:'🚨',
+    render: () => {
+      const groups = {
+        '应急预案': ['是否制定了穴位埋线不良反应处置预案？','预案是否上墙张贴或放置于随手可取位置？','全体操作医师是否接受过不良反应处置演练？'],
+        '晕针处置': ['是否掌握晕针处置流程？（立即起针→平卧→保暖→饮温水→针刺急救穴→必要时呼叫120）'],
+        '过敏处置': ['是否掌握线材过敏处置流程？（抗组胺药→局部处理→必要时取出线体→激素类药物）'],
+        '感染处置': ['是否掌握术后感染处置流程？（局部热敷+抗感染治疗+脓肿形成时切开引流）'],
+        '急救设备药品': ['急救药品是否在有效期内？（每月检查）','氧气袋/氧气瓶是否有充足余量？','急救车是否每月清点并记录？']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🚨</span>不良反应处置能力</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-emergency"></span></span><span id="prog-mt-emergency-text">0%</span></span></div>`;
+      let idx = 0;
+      for(const [g,items] of Object.entries(groups)){
+        html += `<div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)"><span>🚨 ${g}（${items.length}项）</span><span class="arrow">▼</span></div><div class="accordion-body"><ul class="checklist">${items.map(item => renderCheckItem(`d2-emergency-${idx++}`,item)).join('')}</ul></div></div>`;
+      }
+      return html+'</div>';
+    }
+  });
+
+  // 药品器械管理
+  DOC2.sections.push({
+    id: 'mt-supply',
+    title: '📦 药品器械管理自查',
+    icon:'📦',
+    render: () => {
+      const items = ['可吸收缝线是否为合法注册的医疗器械？（有注册证号）','缝线是否符合YY 1116可吸收性外科缝线标准？','是否建立缝线/针具的采购验收记录？','是否建立缝线/针具的入库出库台账？','是否有过期产品仍在使用？','一次性器材是否100%一次性使用（无复用）？','产品储存条件是否符合说明书要求？（阴凉/避光/冷藏）','缝线规格与收费价格是否对应？（不同规格如实收费）'];
+      return `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">📦</span>耗材与器械管理</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-supply"></span></span><span id="prog-mt-supply-text">0%</span></span></div><ul class="checklist">${items.map((item,i) => renderCheckItem(`d2-supply-${i}`,item)).join('')}</ul></div>`;
+    }
+  });
+
+  // 月度自查打勾表
+  DOC2.sections.push({
+    id: 'mt-monthly',
+    title: '📋 月度自查打勾表',
+    icon:'📋',
+    render: () => {
+      const sections = {
+        'A. 资质合规': ['机构许可证/备案证在有效期内','操作医师均持有中医类别执业资格','操作医师均持有埋线培训证书','穴位埋线技术已完成卫健委备案'],
+        'B. 收费合规': ['按"次·日"收费，未按穴位个数收费','埋线针/线体未另行单独收费','未与普通针刺/温针/电针叠加收费','不存在串换项目编码','收费标准已公示'],
+        'C. 操作规范': ['治疗前均进行适应症审核','治疗前均排查禁忌症','操作流程符合GB/T 21709.10-2008','使用一次性无菌器具'],
+        'D. 院感防控': ['操作前后六步洗手+手消毒','皮肤消毒面积≥5cm×5cm，由内向外2遍','消毒棉球一穴一换','无菌针具4小时内使用','医疗废物规范分类处置','治疗室每日紫外线消毒（有记录）'],
+        'E. 医疗文书': ['患者信息登记台账完整','知情同意书100%签署','每次治疗有操作记录','操作记录含穴位/线体/时长/反应/签名','中医辨证记录完整','收费清单与实际治疗一致'],
+        'F. 安全应急': ['急救药品在有效期内','氧气设备完好充足','不良反应预案知晓率100%','术后随访记录完整'],
+        'G. 耗材管理': ['缝线注册证号可查','采购验收/入库出库台账完整','无过期产品使用']
+      };
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">📋</span>穴位埋线门诊月度自查表</span><span class="section-progress"><span class="section-progress-bar"><span class="section-progress-fill" id="prog-mt-monthly"></span></span><span id="prog-mt-monthly-text">0%</span></span><span class="card-badge badge-warning">每月10日前完成</span></div>
+        <div style="font-size:13px;margin-bottom:8px"><strong>门诊部名称：</strong>_______________ &nbsp; <strong>检查月份：</strong>2025年____月 &nbsp; <strong>门诊主任：</strong>_______________</div>`;
+      let idx = 0;
+      for(const [cat,items] of Object.entries(sections)){
+        html += `<h4 style="margin:12px 0 8px;color:var(--primary);font-size:14px">${cat}</h4><ul class="checklist">${items.map(item => renderCheckItem(`d2-monthly-${idx++}`,item)).join('')}</ul>`;
+      }
+      html += `<div style="margin-top:16px;padding-top:12px;border-top:2px solid var(--primary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px">
+        <span><strong>本月问题总数：</strong><span id="monthly-issue-count" style="color:var(--danger);font-size:18px">--</span>条</span>
+        <span><strong>已完成整改：</strong><span id="monthly-done-count" style="color:var(--success);font-size:18px">--</span>条</span>
+        <span><strong>待整改：</strong><span id="monthly-pending-count" style="color:var(--warning);font-size:18px">--</span>条</span>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between"><span><strong>门诊主任签字：</strong>_______________</span><span><strong>医保办复核签字：</strong>_______________</span></div></div>`;
+      return html;
+    }
+  });
+
+  // 迎检话术（埋线专项）
+  DOC2.sections.push({
+    id: 'mt-scenarios',
+    title: '🎯 迎检话术速查（埋线专项）',
+    icon:'🎯',
+    render: () => {
+      const scenes = [
+        {
+          title: '质疑"为什么按穴位个数收费？"',
+          q: '检查方："你们这个穴位埋线收了8个穴位的费用？"',
+          a: '应答：我们核查一下……（查系统）。根据2025年国家中医针法类价格项目统一规范及辽宁省医保局文件精神，穴位埋线已统一按\'次·日\'收费，不应按穴位个数计费。这是我们系统更新滞后，旧版收费模板未切换，马上更正为按次收费。多收金额今天核算，3天内退回。这是整改承诺书。'
+        },
+        {
+          title: '质疑"埋线材料为何单独收费？"',
+          q: '检查方："穴位埋线的针和线为什么另外收费？"',
+          a: '应答：您提醒得对。根据2025年新规，埋线针具和可吸收缝线均属于基本物质消耗，已计入穴位埋线项目价格，不应另行收费。我们已注意到这个问题，本周内更新收费系统去除材料费条目。之前多收的会全额退回。'
+        },
+        {
+          title: '质疑操作资质',
+          q: '检查方："操作医师有埋线资质吗？"',
+          a: '应答：操作穴位埋线的医师均具备中医类别执业资格，且均完成系统的穴位埋线专业培训。这是每位操作医师的执业证书复印件和培训结业证明。王医生2023年参加全国穴位埋线技术培训班（80学时），李医生2024年参加辽宁省中医适宜技术培训。都在有效期内。'
+        },
+        {
+          title: '质疑无菌操作',
+          q: '检查方："消毒操作规范吗？"',
+          a: '应答：我们严格按GB/T 21709.10-2008国家标准执行。操作前六步洗手+手消毒，皮肤消毒面积≥5cm×5cm，以穴位为中心由内向外涂擦2遍，消毒棉球一穴一换。使用一次性无菌埋线针具，打开4小时内使用。这是我们的院感操作规范手册和每日消毒记录，您可以抽查治疗室的监控录像。'
+        },
+        {
+          title: '质疑"适应证是否合适"',
+          q: '检查方："这个患者诊断为普通腰痛，有必要做埋线吗？"',
+          a: '应答：该患者诊断\'慢性腰肌劳损（腰痛-气滞血瘀证）\'，病程6个月，经针灸、推拿治疗后反复发作。穴位埋线适应症包括慢性疼痛性疾病，采用肾俞、大肠俞、委中等穴，线体持续刺激可起到长效针灸作用。这是辨证记录、知情同意书和既往就诊记录。'
+        },
+        {
+          title: '质疑"是否有知情同意"',
+          q: '检查方："患者知道埋线的风险和注意事项吗？"',
+          a: '应答：每位患者在治疗前均签署《穴位埋线知情同意书》，内容包含：适应症、操作过程、可能的不良反应（晕针/过敏/感染/血肿/线体外露）、术后护理注意事项。这是该患者的知情同意书原件，有患者亲笔签名和日期。'
+        }
+      ];
+      let html = `<div class="card"><div class="card-header"><span class="card-title"><span class="icon">🎯</span>穴位埋线迎检话术速查</span></div>
+        <div class="alert alert-info"><span class="alert-icon">💡</span><div><strong>核心原则：政策依据 + 原始记录 + 逻辑关联</strong></div></div>`;
+      html += scenes.map((s,i) => `
+        <div class="scenario-card">
+          <div class="scenario-header" onclick="toggleScenario(this)"><span><span class="scenario-num">${i+1}</span>${s.title}</span><span class="arrow">▼</span></div>
+          <div class="scenario-body"><div class="scenario-q">🔴 ${s.q}</div><div class="scenario-a">🟢 ${s.a}</div></div>
+        </div>`).join('');
+      return html+'</div>';
+    }
+  });
+
+  // 知情同意书模板
+  DOC2.sections.push({
+    id: 'mt-consent-form',
+    title: '📄 穴位埋线知情同意书模板',
+    icon:'📄',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">📄</span>穴位埋线治疗知情同意书</span></div>
+        <div class="consent-box">
+          <h3>辽宁中医嘉和医院 · 穴位埋线治疗知情同意书</h3>
+          <p><strong>患者姓名：</strong>__________ &nbsp; <strong>性别：</strong>____ &nbsp; <strong>年龄：</strong>____ &nbsp; <strong>病历号：</strong>__________</p>
+          <p><strong>一、诊断：</strong>____________________________________________</p>
+          <p style="text-indent:2em"><strong>中医辨证：</strong>_________________________________________</p>
+          <p><strong>二、治疗方案</strong><br>拟行治疗：穴位埋线疗法<br>治疗穴位：_________________________________________<br>线体类型：________________ &nbsp; 治疗次数：第 ____ 次<br>医师签名：__________ &nbsp; 日期：__________</p>
+          <p><strong>三、治疗告知</strong><br>穴位埋线是将可吸收性外科缝线置入特定穴位内，利用线体对穴位的持续刺激作用以防治疾病的中医特色疗法（GB/T 21709.10-2008）。</p>
+          <p>我已了解：<br>（一）<strong>适应症</strong>：本品适用于慢性功能性疾病、疼痛类疾病、代谢性疾病、美容调理等。<br>（二）<strong>禁忌症</strong>：皮肤破损/溃疡处、出血倾向/凝血障碍、严重糖尿病、过敏体质、孕妇、5岁以下儿童等不适合此项治疗。<br>（三）<strong>注意事项</strong>：术后1-2天创面禁沾水，保持干燥清洁；饮食清淡；如出现异常红肿、发热等不适及时复诊。<br>（四）<strong>可能的不良反应：</strong>1.治疗后1-5天内局部轻度红肿热痛（正常无菌性炎症反应）2.个别患者可能出现晕针反应 3.极少数患者对线体过敏（局部瘙痒、红肿加剧、线体溢出）4.操作部位可能出现轻微血肿或瘀青 5.极低概率的感染或神经损伤</p>
+          <p><strong>四、患者声明</strong><br>本人已详细阅读并理解以上内容，医师已对我不明白的问题做了充分解释。本人自愿接受穴位埋线治疗，并同意配合术后随访。如有异常情况，及时联系医师或来院就诊。</p>
+          <div class="sig-line"><span><strong>患者（或家属）签名：</strong>__________ &nbsp; 日期：__________</span><span><strong>与患者关系：</strong>__________</span></div>
+          <p style="margin-top:8px"><strong>联系电话：</strong>___________________</p>
+          <p style="margin-top:8px"><strong>本院联系电话：</strong>___________________ &nbsp; <strong>接诊医师：</strong>__________</p>
+          <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:2px solid var(--primary);font-weight:700">
+            <span>本人同意接受穴位埋线治疗并已知晓相关风险</span><span>医师已履行告知义务</span>
+          </div>
+        </div>
+      </div>
+    `
+  });
+
+  // 政策时间轴
+  DOC2.sections.push({
+    id: 'mt-timeline',
+    title: '📊 2025年关键政策时间轴',
+    icon:'📊',
+    render: () => `
+      <div class="card">
+        <div class="card-header"><span class="card-title"><span class="icon">📊</span>穴位埋线相关2025年政策节点</span></div>
+        <div class="timeline">
+          <div class="tl-item done"><span class="tl-tag month">2025年1月</span><div class="tl-title">国家医保局启动自查自纠</div></div>
+          <div class="tl-item done"><span class="tl-tag month">2月-3月</span><div class="tl-title">定点机构自查自纠+退费</div></div>
+          <div class="tl-item"><span class="tl-tag month">8月-11月</span><div class="tl-title">辽宁省密集发布中医类价格规范</div><div class="tl-desc">辽医保发〔2025〕36号/63号等</div></div>
+          <div class="tl-item"><span class="tl-tag ongoing">4月起持续</span><div class="tl-title">飞检持续常态化</div></div>
+        </div>
+        <div class="alert alert-warning" style="margin-top:8px">
+          <span class="alert-icon">⚠️</span>
+          <div><strong>重点关注：</strong>中医特殊疗法类（含穴位埋线）价格项目统一映射 · 按"次·日"收费已强制执行，旧版按穴位收费模式全面废止</div>
+        </div>
+      </div>
+    `
+  });
+})();
+
+// ============================================================
+// RENDER HELPERS
+// ============================================================
+function renderCheckItem(id, label) {
+  return `<li id="li-${id}" class="checklist-item" onclick="toggleCheck('${id}')">
+    <input type="checkbox" class="cl-cb" id="cb-${id}" onclick="event.stopPropagation();toggleCheck('${id}')">
+    <span class="cl-label">${label}</span>
+  </li>`;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let currentTab = 'doc1';
+let currentDoc = DOC1;
+
+function getStorageKey(id) { return `cc-switch-${id}`; }
+
+function isChecked(id) { return localStorage.getItem(getStorageKey(id)) === 'true'; }
+
+function setChecked(id, val) {
+  if(val) localStorage.setItem(getStorageKey(id), 'true');
+  else localStorage.removeItem(getStorageKey(id));
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function toggleCheck(id) {
+  const newVal = !isChecked(id);
+  setChecked(id, newVal);
+  updateCheckUI(id);
+  updateAllProgress();
+}
+
+function updateCheckUI(id) {
+  const li = document.getElementById('li-'+id);
+  const cb = document.getElementById('cb-'+id);
+  if(!li || !cb) return;
+  const checked = isChecked(id);
+  cb.checked = checked;
+  li.classList.toggle('checked', checked);
+}
+
+function updateAllProgress() {
+  // Update all section progresses
+  const allCBs = document.querySelectorAll('.cl-cb');
+  allCBs.forEach(cb => {
+    const id = cb.id.replace('cb-','');
+    updateCheckUI(id);
+  });
+
+  // Calculate per-section progress
+  document.querySelectorAll('[id^="prog-"]').forEach(el => {
+    const sectionId = el.id.replace('prog-','');
+    if(sectionId === 'global') return;
+    updateSectionProgress(sectionId);
+  });
+
+  // Global progress
+  const total = allCBs.length;
+  const checked = [...allCBs].filter(cb => isChecked(cb.id.replace('cb-',''))).length;
+  const pct = total ? Math.round(checked/total*100) : 0;
+  document.getElementById('globalProgressFill').style.width = pct+'%';
+  document.getElementById('globalProgressText').textContent = pct+'% ('+checked+'/'+total+')';
+
+  // Monthly stats for doc2
+  updateMonthlyStats();
+}
+
+function updateSectionProgress(sectionId) {
+  const prefix = sectionId; // e.g. 'dept-check' or 'mt-qual'
+  const allCBs = document.querySelectorAll('.cl-cb');
+  let total = 0, checked = 0;
+  // Find the section progress element
+  const fillEl = document.getElementById('prog-'+sectionId);
+  const textEl = document.getElementById('prog-'+sectionId+'-text');
+  if(!fillEl || !textEl) return;
+  // Find the parent card/section
+  const card = fillEl.closest('.card');
+  if(!card) return;
+  const sectionCBs = card.querySelectorAll('.cl-cb');
+  sectionCBs.forEach(cb => {
+    total++;
+    if(isChecked(cb.id.replace('cb-',''))) checked++;
+  });
+  const pct = total ? Math.round(checked/total*100) : 0;
+  fillEl.style.width = pct+'%';
+  textEl.textContent = pct+'% ('+checked+'/'+total+')';
+}
+
+function updateMonthlyStats() {
+  const totalEl = document.getElementById('monthly-issue-count');
+  const doneEl = document.getElementById('monthly-done-count');
+  const pendingEl = document.getElementById('monthly-pending-count');
+  if(!totalEl || !doneEl || !pendingEl) return;
+  const monthlyCBs = document.querySelectorAll('[id^="cb-d2-monthly-"]');
+  const total = monthlyCBs.length;
+  const checked = [...monthlyCBs].filter(cb => isChecked(cb.id.replace('cb-',''))).length;
+  totalEl.textContent = total - checked; // unchecked = issues
+  doneEl.textContent = checked; // checked = resolved
+  pendingEl.textContent = total - checked;
+}
+
+function toggleAccordion(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+function toggleScenario(header) {
+  header.parentElement.querySelector('.scenario-body').classList.toggle('open');
+  header.querySelector('.arrow').classList.toggle('open');
+}
+
+function toggleFlowDetail(step) {
+  step.querySelector('.flow-detail').classList.toggle('open');
+  step.classList.toggle('active');
+}
+
+function expandAll() {
+  document.querySelectorAll('.accordion-body').forEach(b => b.classList.add('open'));
+  document.querySelectorAll('.accordion-header').forEach(h => h.classList.add('open'));
+  document.querySelectorAll('.scenario-body').forEach(b => b.classList.add('open'));
+  document.querySelectorAll('.flow-detail').forEach(b => b.classList.add('open'));
+  document.querySelectorAll('.flow-step').forEach(s => s.classList.add('active'));
+}
+
+function resetAll() {
+  if(!confirm('确定要重置所有勾选记录吗？此操作不可撤销。')) return;
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith('cc-switch-')) keys.push(k);
+  }
+  keys.forEach(k => localStorage.removeItem(k));
+  updateAllProgress();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tabId) {
+  currentTab = tabId;
+  currentDoc = tabId === 'doc1' ? DOC1 : DOC2;
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  // Render
+  renderCurrentDoc();
+  // Update sidebar
+  buildSidebar();
+  // Restore checks
+  updateAllProgress();
+  // Scroll to top
+  document.getElementById('mainContent').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function renderCurrentDoc() {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = currentDoc.sections.map(s => `<section id="${s.id}"><h2 style="margin-bottom:12px;color:var(--primary);font-size:20px">${s.icon} ${s.title}</h2>${s.render()}</section>`).join('');
+}
+
+function buildSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = currentDoc.sections.map(s =>
+    `<li><a href="#${s.id}" onclick="document.getElementById('sidebar').classList.remove('open')">${s.icon} ${s.title}</a></li>`
+  ).join('');
+}
+
+// ============================================================
+// INTERSECTION OBSERVER for sidebar highlight
+// ============================================================
+const sidebarObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      document.querySelectorAll('.sidebar-nav a').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#'+entry.target.id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+function observeSections() {
+  document.querySelectorAll('section[id]').forEach(s => sidebarObserver.observe(s));
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  switchTab('doc1');
+  observeSections();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// Re-observe after rendering a new doc
+const origRender = renderCurrentDoc;
+renderCurrentDoc = function() {
+  origRender();
+  setTimeout(observeSections, 100);
+};
+</script>
+</body>
+</html>

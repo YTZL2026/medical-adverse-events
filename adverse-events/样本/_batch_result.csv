@@ -1,0 +1,26 @@
+﻿_source_file,_method,_error,_raw_text
+423ecdbb300fc8e059fc78fafe46dea0.jpg,图片需要OCR(未安装OCR库),图片需要OCR(未安装OCR库),
+5311f530583633268a498e1b441d89af.jpg,图片需要OCR(未安装OCR库),图片需要OCR(未安装OCR库),
+5f43a2f0751f5326359196737ef16ba2.jpg,图片需要OCR(未安装OCR库),图片需要OCR(未安装OCR库),
+_batch_result.csv,CSV直接解析,,"_source_file: 423ecdbb300fc8e059fc78fafe46dea0.jpg
+_method: 图片需要OCR(未安装OCR库)
+_error: 图片需要OCR(未安装OCR库)
+---
+_source_file: 5311f530583633268a498e1b441d89af.jpg
+_method: 图片需要OCR(未安装OCR库)
+_error: 图片需要OCR(未安装OCR库)
+---
+_source_file: 5f43a2f0751f5326359196737ef16ba2.jpg
+_method: 图片需要OCR(未安装OCR库)
+_error: 图片需要OCR(未安装OCR库)
+---
+_source_file: _batch_result.csv
+_method: CSV直接解析
+_raw_text: _source_file: 423ecdbb300fc8e059fc78fafe46dea0.jpg
+_method: 图片需要OCR(未安装OCR库)
+_error: 图片需要OCR(未安装OCR库)
+---
+_source_file: 53"
+a99678cde7cffb2141158aca06747d24.jpg,图片需要OCR(未安装OCR库),图片需要OCR(未安装OCR库),
+aebf5b15b59e73cb68a664cf5b375856.jpg,图片需要OCR(未安装OCR库),图片需要OCR(未安装OCR库),
+dc73e5b82939221e24ced0d86ab88ee2.jpg,图片需要OCR(未安装OCR库),图片需要OCR(未安装OCR库),

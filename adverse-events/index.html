@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>辽宁中医嘉和医院 · 医疗不良事件报告系统</title>
+<style>
+:root {
+  --primary: #1a5276; --primary-light: #2980b9; --gold: #b8860b; --gold-light: #f0c75e;
+  --bg: #f0f4f8; --card: #ffffff; --text: #2c3e50; --text-secondary: #5a6c7d;
+  --border: #dce3ea; --success: #27ae60; --danger: #e74c3c; --warning: #f39c12;
+  --info: #2980b9; --radius: 10px; --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.12); --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--primary-light);text-decoration:none}
+
+/* ===== HEADER ===== */
+.header{background:linear-gradient(135deg,var(--primary),#0d3b5c);color:#fff;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.15)}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-logo{font-size:26px}
+.header h1{font-size:18px;font-weight:600;letter-spacing:1px}
+.header-sub{font-size:11px;opacity:0.8}
+.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:var(--transition);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-outline{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.btn-outline:hover{background:rgba(255,255,255,0.25)}
+.btn-primary{background:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#c0392b}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#219a52}
+
+/* ===== TAB BAR ===== */
+.tab-bar{display:flex;background:var(--card);border-bottom:2px solid var(--border);padding:0 28px;position:sticky;top:64px;z-index:99;gap:0}
+.tab-btn{flex:1;max-width:240px;padding:12px 20px;border:none;background:none;cursor:pointer;font-size:14px;font-weight:500;color:var(--text-secondary);border-bottom:3px solid transparent;transition:var(--transition);white-space:nowrap}
+.tab-btn:hover{color:var(--primary);background:#f8fafc}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
+.tab-badge{display:inline-block;background:var(--primary);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+.tab-badge.warn{background:var(--danger)}
+
+/* ===== LAYOUT ===== */
+.main-content{padding:20px 28px;max-width:1200px;margin:0 auto}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ===== STATS ROW ===== */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:14px 18px;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-size:28px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:11px;color:var(--text-secondary);margin-top:4px}
+
+/* ===== CARD ===== */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px;transition:var(--transition)}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card-title{font-size:16px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:22px}
+
+/* ===== FORM ELEMENTS ===== */
+.form-section{margin-bottom:24px}
+.form-section-title{font-size:15px;font-weight:700;color:var(--primary);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.form-section-title .sec-letter{display:inline-flex;width:28px;height:28px;line-height:28px;text-align:center;background:var(--primary);color:#fff;border-radius:6px;font-size:13px;font-weight:700;flex-shrink:0;justify-content:center;align-items:center}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+.form-label.required::after{content:' *';color:var(--danger)}
+.form-input,.form-select,.form-textarea{padding:8px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;transition:var(--transition);background:var(--card);color:var(--text)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(41,128,185,0.1)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-select{cursor:pointer}
+
+/* Radio & Checkbox groups */
+.chip-group{display:flex;flex-wrap:wrap;gap:8px}
+.chip-label{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;font-size:12px;transition:var(--transition);user-select:none;background:var(--card)}
+.chip-label:hover{border-color:var(--primary-light)}
+.chip-label input{display:none}
+.chip-label:has(input:checked){background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+.chip-label input:checked+.chip-icon{filter:brightness(10)}
+
+/* Category multi-select cards */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.cat-card{border:2px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;transition:var(--transition);user-select:none;position:relative}
+.cat-card:hover{border-color:var(--primary-light);background:#f8fafc}
+.cat-card.selected{border-color:var(--primary);background:#f0f7ff}
+.cat-card .cat-check{position:absolute;top:8px;right:10px;width:18px;height:18px;border:2px solid #bdc3c7;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;transition:var(--transition)}
+.cat-card.selected .cat-check{background:var(--primary);border-color:var(--primary)}
+.cat-card-title{font-weight:700;font-size:13px;margin-bottom:4px}
+.cat-card-desc{font-size:11px;color:var(--text-secondary);line-height:1.5}
+
+/* Severity selector */
+.severity-row{display:flex;gap:12px;flex-wrap:wrap}
+.severity-card{flex:1;min-width:120px;border:2px solid var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:var(--transition);user-select:none}
+.severity-card:hover{border-color:var(--primary-light);transform:translateY(-2px)}
+.severity-card.selected{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,82,118,0.12)}
+.severity-card .sev-num{font-size:36px;font-weight:900;margin-bottom:4px}
+.severity-card:nth-child(1) .sev-num{color:#e74c3c}
+.severity-card:nth-child(2) .sev-num{color:#e67e22}
+.severity-card:nth-child(3) .sev-num{color:#f39c12}
+.severity-card:nth-child(4) .sev-num{color:#27ae60}
+.severity-card .sev-label{font-size:11px;color:var(--text-secondary);margin-top:4px}
+
+/* ===== TABLE ===== */
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{background:var(--primary);color:#fff;padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap}
+.data-table th:first-child{border-radius:8px 0 0 0}
+.data-table th:last-child{border-radius:0 8px 0 0}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:hover td{background:#f8fafc}
+.data-table tr{cursor:pointer;transition:var(--transition)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-secondary)}
+.empty-state .empty-icon{font-size:48px;margin-bottom:12px}
+
+/* Status dots */
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.status-draft{background:var(--text-secondary)}
+.status-submitted{background:var(--info)}
+.status-reviewed{background:var(--warning)}
+.status-evaluated{background:#8e44ad}
+.status-closed{background:var(--success)}
+
+/* Filter bar */
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+.filter-label{font-size:11px;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.filter-chip{padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;transition:var(--transition);background:var(--card);user-select:none}
+.filter-chip:hover{border-color:var(--primary-light)}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ===== MODAL ===== */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;justify-content:center;align-items:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);max-width:700px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2)}
+.modal-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-secondary);padding:4px 8px;border-radius:4px}
+.modal-close:hover{background:#f0f0f0}
+.modal-body{padding:20px}
+.modal-body .info-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dotted var(--border);font-size:13px}
+.modal-body .info-row .info-label{color:var(--text-secondary);flex-shrink:0}
+.modal-body .section-block{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.modal-body .section-block h4{font-size:13px;color:var(--primary);margin-bottom:8px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap}
+
+/* ===== ALERT ===== */
+.alert{padding:14px 18px;border-radius:8px;margin-bottom:16px;font-size:12px;display:flex;align-items:flex-start;gap:10px;line-height:1.7}
+.alert-info{background:#eaf4fd;border:1px solid #aed6f1}
+.alert-warning{background:#fef9e7;border:1px solid #f9e79f}
+
+/* ===== FOOTER ===== */
+.footer{text-align:center;padding:20px;color:var(--text-secondary);font-size:11px;border-top:1px solid var(--border);background:var(--card);margin-top:20px}
+
+/* ===== PRINT ===== */
+@media print{
+  .header,.tab-bar,.btn,.footer,.filter-bar,.stats-row,.form-section-title .sec-letter{display:none!important}
+  .main-content{padding:0}
+  .card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}
+  body{font-size:11px}
+  .form-input,.form-select,.form-textarea{border:none;padding:2px 0;background:none}
+  .chip-label:has(input:checked){background:#fff;color:var(--text);border-color:#999}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .header{padding:10px 14px}
+  .header h1{font-size:14px}
+  .main-content{padding:12px}
+  .tab-btn{padding:10px 14px;font-size:12px}
+  .cat-grid{grid-template-columns:1fr}
+  .severity-row{flex-direction:column}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-left">
+    <span class="header-logo">🛡️</span>
+    <div>
+      <h1>辽宁中医嘉和医院 · 医疗不良事件报告系统</h1>
+      <div class="header-sub">依据《医疗质量安全事件报告暂行规定》· 不良事件上报与追踪闭环</div>
+    </div>
+  </div>
+  <div class="header-right" style="display:flex;align-items:center;gap:10px">
+    <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ 打印</button>
+  </div>
+</header>
+
+<!-- ===== TAB BAR ===== -->
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="form" onclick="switchTab('form')">📝 填报报告<span class="tab-badge" id="badgeNew">新建</span></button>
+  <button class="tab-btn" data-tab="dashboard" onclick="switchTab('dashboard')">📊 事件台账<span class="tab-badge" id="badgeCount">0</span></button>
+  <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">📈 统计分析</button>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+
+<!-- ================================================================ -->
+<!-- TAB 1: REPORT FORM -->
+<!-- ================================================================ -->
+<div class="tab-content active" id="tab-form">
+
+  <div class="alert alert-info">
+    <span style="font-size:18px">💡</span>
+    <div><strong>报告原则：</strong>鼓励主动上报、非惩罚性原则。对主动报告且积极整改者从轻处理；对隐瞒不报者从重追责。<br>
+    <strong>保密承诺：</strong>本系统对报告人信息严格保密，仅主管部门可见。</div>
+  </div>
+
+  <!-- ===== 批量导入 ===== -->
+  <div class="card" id="batchCard">
+    <div class="card-header" style="cursor:pointer" onclick="toggleBatch()">
+      <span class="card-title"><span class="icon">📥</span>批量导入（从文件自动提取患者信息）</span>
+      <span style="font-size:12px;color:var(--text-secondary)" id="batchToggle">展开 ▼</span>
+    </div>
+    <div id="batchBody" style="display:none">
+      <div class="alert alert-info" style="margin-bottom:12px">
+        <span style="font-size:16px">💡</span>
+        <div>
+          <strong>浏览器直接导入（无需安装）：</strong>CSV · Excel(.xlsx) · 粘贴表格数据<br>
+          <strong>全格式处理（需先运行 <code>python _batch_import.py</code> 生成CSV）：</strong><br>
+          　✅ 文本类（100%准确）：Word(.docx) · JSON · TXT/Markdown · XPS · 文本型PDF<br>
+          　✅ 图像类（OCR识别）：扫描PDF · PNG · JPG · BMP · TIFF · WebP<br>
+          <em style="font-size:11px">唯一依赖：<code>pip install easyocr</code>（仅图像类需要，文本类零依赖）</em>
+        </div>
+      </div>
+
+      <!-- Step 1: Upload -->
+      <div style="margin-bottom:12px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:6px">📋 第一步：下载模板或上传文件</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button type="button" class="btn btn-outline" style="border-color:var(--primary);color:var(--primary)" onclick="downloadTemplate()">
+            📄 下载 CSV 模板
+          </button>
+          <label class="btn btn-primary" style="cursor:pointer">
+            📂 上传 CSV / Excel
+            <input type="file" id="batchFileInput" accept=".csv,.xlsx,.xls" onchange="handleBatchFile(this)" style="display:none">
+          </label>
+          <span style="font-size:11px;color:var(--text-secondary)">也支持粘贴表格数据</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Paste area -->
+      <div style="margin-bottom:12px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:6px">📋 或直接粘贴表格数据（Tab/逗号分隔）</div>
+        <textarea id="batchPasteArea" class="form-textarea" rows="3" placeholder="粘贴 Excel 中复制的行数据，例如：&#10;张三&#9;ZY2026001&#9;男&#9;65&#9;退休&#9;2026-06-12&#9;腰痛病&#10;李四&#9;ZY2026002&#9;女&#9;42&#9;在职&#9;2026-06-11&#9;感冒病"></textarea>
+        <button type="button" class="btn btn-sm btn-outline" style="margin-top:4px;border-color:var(--primary);color:var(--primary)" onclick="parsePastedData()">🔍 解析粘贴数据</button>
+      </div>
+
+      <!-- Step 3: Column mapping -->
+      <div id="batchMappingArea" style="display:none;margin-bottom:12px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:6px">🔗 第二步：列映射（将文件列对应到表单字段）</div>
+        <div id="batchMappingSelects" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
+
+      <!-- Step 4: Preview table -->
+      <div id="batchPreviewArea" style="display:none;margin-bottom:12px">
+        <div style="font-weight:600;font-size:13px;margin-bottom:6px">👁️ 第三步：预览与确认</div>
+        <div id="batchPreviewTable" style="overflow-x:auto;max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:6px"></div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <button type="button" class="btn btn-primary" onclick="batchImport()">✅ 导入全部（<span id="batchImportCount">0</span>条）</button>
+          <button type="button" class="btn btn-outline" style="border-color:var(--danger);color:var(--danger)" onclick="cancelBatch()">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form id="reportForm" onsubmit="submitReport(event)">
+
+    <!-- ===== A. 患者资料 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">A</span>患者资料</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label required">患者姓名</label>
+            <input class="form-input" type="text" name="a_name" placeholder="请填写患者姓名" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">病历号/住院号</label>
+            <input class="form-input" type="text" name="a_record_id" placeholder="病历号或住院号" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">性别</label>
+            <div class="chip-group">
+              <label class="chip-label"><input type="radio" name="a_gender" value="男" required>男</label>
+              <label class="chip-label"><input type="radio" name="a_gender" value="女">女</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">年龄</label>
+            <input class="form-input" type="text" name="a_age" placeholder="例：65岁">
+          </div>
+          <div class="form-group">
+            <label class="form-label">职别</label>
+            <input class="form-input" type="text" name="a_occupation" placeholder="例：退休/在职/农民">
+          </div>
+          <div class="form-group">
+            <label class="form-label required">诊疗时间</label>
+            <input class="form-input" type="datetime-local" name="a_treatment_time" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label required">临床诊断</label>
+            <input class="form-input" type="text" name="a_diagnosis" placeholder="请填写临床诊断" required>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== B. 不良事件情况 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">B</span>不良事件情况</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label required">在场相关人员或相关科室</label>
+            <input class="form-input" type="text" name="b_related" placeholder="填写相关人员姓名及所属科室" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label required">事件发生场所</label>
+            <div class="chip-group">
+              <label class="chip-label"><input type="radio" name="b_location" value="急诊" required>🏥 急诊</label>
+              <label class="chip-label"><input type="radio" name="b_location" value="门诊">🩺 门诊</label>
+              <label class="chip-label"><input type="radio" name="b_location" value="住院部">🛏️ 住院部</label>
+              <label class="chip-label"><input type="radio" name="b_location" value="医技部门">🔬 医技部门</label>
+              <label class="chip-label"><input type="radio" name="b_location" value="行政后勤部门">📋 行政后勤</label>
+              <label class="chip-label"><input type="radio" name="b_location" value="其它">📌 其它</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label required">不良后果</label>
+            <div class="chip-group">
+              <label class="chip-label"><input type="radio" name="b_consequence" value="无" required onchange="toggleConsequenceDetail()">✅ 无</label>
+              <label class="chip-label"><input type="radio" name="b_consequence" value="有" onchange="toggleConsequenceDetail()">⚠️ 有（请详细说明）</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" id="consequenceDetailRow" style="display:none">
+          <div class="form-group full">
+            <label class="form-label required">不良后果详细描述</label>
+            <textarea class="form-textarea" name="b_consequence_detail" rows="3" placeholder="请详细描述不良后果..."></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label required">事件经过</label>
+            <textarea class="form-textarea" name="b_description" rows="4" placeholder="请客观、详细描述事件发生的经过（时间、地点、涉及人员、具体操作、发生过程），可另加附页" required></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== C. 不良事件类别 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">C</span>不良事件类别（可多选）</div>
+        <div class="cat-grid" id="catGrid">
+          <div class="cat-card" data-cat="diagnosis" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">🔴 诊治问题</div>
+            <div class="cat-card-desc">错误诊断、严重漏诊、错误治疗、治疗不及时、院内感染等</div>
+          </div>
+          <div class="cat-card" data-cat="medication" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">💊 不良治疗/用药</div>
+            <div class="cat-card-desc">错用药、多用药、漏用药、药物不良反应、输液反应、输血反应等</div>
+          </div>
+          <div class="cat-card" data-cat="accident" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">⚠️ 意外事件</div>
+            <div class="cat-card-desc">跌倒、坠床、烫伤、自残、自杀、失踪、猝死等</div>
+          </div>
+          <div class="cat-card" data-cat="exam" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">🔬 辅助检查问题</div>
+            <div class="cat-card-desc">报告错误、标本丢失、标本错误、检查过程中出现严重并发症等</div>
+          </div>
+          <div class="cat-card" data-cat="surgery" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">🔪 手术相关问题</div>
+            <div class="cat-card-desc">手术患者/部位/方式选择错误、术中死亡、并发症、器械遗留体内、再次手术、麻醉相关事件等</div>
+          </div>
+          <div class="cat-card" data-cat="communication" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">💬 医患沟通</div>
+            <div class="cat-card-desc">医患沟通不良、医患语言冲突、医患行为冲突等</div>
+          </div>
+          <div class="cat-card" data-cat="other" onclick="toggleCat(this)">
+            <div class="cat-check">✓</div>
+            <div class="cat-card-title">📌 其他</div>
+            <div class="cat-card-desc">非上列导致医疗不良后果的其他异常事件</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== D. 不良事件等级 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">D</span>不良事件等级</div>
+        <div class="severity-row" id="severityRow">
+          <div class="severity-card" data-level="I" onclick="selectSeverity(this)">
+            <div class="sev-num">Ⅰ</div>
+            <div style="font-weight:700;font-size:13px">警告事件</div>
+            <div class="sev-label">造成患者死亡或永久性伤害</div>
+          </div>
+          <div class="severity-card" data-level="II" onclick="selectSeverity(this)">
+            <div class="sev-num">Ⅱ</div>
+            <div style="font-weight:700;font-size:13px">不良后果事件</div>
+            <div class="sev-label">对患者造成损害需进一步处理</div>
+          </div>
+          <div class="severity-card" data-level="III" onclick="selectSeverity(this)">
+            <div class="sev-num">Ⅲ</div>
+            <div style="font-weight:700;font-size:13px">未造成后果事件</div>
+            <div class="sev-label">发生但未对患者造成损害</div>
+          </div>
+          <div class="severity-card" data-level="IV" onclick="selectSeverity(this)">
+            <div class="sev-num">Ⅳ</div>
+            <div style="font-weight:700;font-size:13px">隐患事件</div>
+            <div class="sev-label">及时发现并纠正，未发生</div>
+          </div>
+        </div>
+        <input type="hidden" name="d_level" id="d_level_input" required>
+      </div>
+    </div>
+
+    <!-- ===== E. 处理与分析 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">E</span>事件发生后及时处理与分析</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label">导致事件的可能原因</label>
+            <textarea class="form-textarea" name="e_cause" rows="3" placeholder="请分析事件发生的可能原因（可另加附页）..."></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label">事件处理情况（补救措施或改善建议）</label>
+            <textarea class="form-textarea" name="e_action" rows="3" placeholder="请描述已采取的补救措施或改善建议（可另加附页）..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== F. 主管部门评价 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">F</span>不良事件评价</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label">主管部门意见陈述</label>
+            <textarea class="form-textarea" name="f_evaluation" rows="3" placeholder="由主管部门填写（可另加附页）..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== G. 持续改进 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">G</span>持续改进措施</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label class="form-label">持续改进措施（由主管部门或医疗质量管理委员会填写）</label>
+            <textarea class="form-textarea" name="g_improvement" rows="3" placeholder="填写持续改进措施（可另加附页）..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== H. 报告人信息 ===== -->
+    <div class="card">
+      <div class="form-section">
+        <div class="form-section-title"><span class="sec-letter">H</span>报告人信息</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label required">报告人身份</label>
+            <div class="chip-group">
+              <label class="chip-label"><input type="radio" name="h_role" value="医师" required>👨‍⚕️ 医师</label>
+              <label class="chip-label"><input type="radio" name="h_role" value="技师">🔧 技师</label>
+              <label class="chip-label"><input type="radio" name="h_role" value="护理人员">👩‍⚕️ 护理人员</label>
+              <label class="chip-label"><input type="radio" name="h_role" value="其他">📌 其他</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">当事人类别</label>
+            <div class="chip-group">
+              <label class="chip-label"><input type="radio" name="h_category" value="本院" required>🏥 本院</label>
+              <label class="chip-label"><input type="radio" name="h_category" value="进修生">📚 进修生</label>
+              <label class="chip-label"><input type="radio" name="h_category" value="研究生">🎓 研究生</label>
+              <label class="chip-label"><input type="radio" name="h_category" value="学生">📖 学生</label>
+              <label class="chip-label"><input type="radio" name="h_category" value="不详">❓ 不详</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">职称</label>
+            <div class="chip-group">
+              <label class="chip-label"><input type="radio" name="h_title" value="高级" required>高级</label>
+              <label class="chip-label"><input type="radio" name="h_title" value="中级">中级</label>
+              <label class="chip-label"><input type="radio" name="h_title" value="初级">初级</label>
+              <label class="chip-label"><input type="radio" name="h_title" value="士级">士级</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label required">报告人签名</label>
+            <input class="form-input" type="text" name="h_name" placeholder="报告人姓名" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">科室</label>
+            <input class="form-input" type="text" name="h_dept" placeholder="所属科室" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">联系电话</label>
+            <input class="form-input" type="tel" name="h_phone" placeholder="联系电话">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SUBMIT ===== -->
+    <div class="card" style="text-align:center">
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button type="submit" class="btn btn-primary" style="padding:12px 40px;font-size:15px">
+          ✅ 提交报告
+        </button>
+        <button type="button" class="btn btn-outline" style="padding:12px 20px;border-color:var(--primary);color:var(--primary)" onclick="saveDraft()">
+          💾 保存草稿
+        </button>
+        <button type="reset" class="btn btn-outline" style="padding:12px 20px;border-color:#999;color:#999" onclick="return confirm('确定要清空所有已填内容吗？')">
+          🔄 重置表单
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:10px">
+        提交后将自动进入审核流程：科主任审核 → 主管部门评价 → 持续改进 → 闭环归档
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<!-- ================================================================ -->
+<!-- TAB 2: DASHBOARD / REPORT LIST -->
+<!-- ================================================================ -->
+<div class="tab-content" id="tab-dashboard">
+
+  <!-- STATS ROW -->
+  <div class="stats-row" id="dashboardStats"></div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-label">🔍 筛选：</span>
+    <span class="filter-label">等级</span>
+    <span class="filter-chip active" data-filter="level" data-val="all">全部</span>
+    <span class="filter-chip" data-filter="level" data-val="I">Ⅰ级</span>
+    <span class="filter-chip" data-filter="level" data-val="II">Ⅱ级</span>
+    <span class="filter-chip" data-filter="level" data-val="III">Ⅲ级</span>
+    <span class="filter-chip" data-filter="level" data-val="IV">Ⅳ级</span>
+    <span style="margin-left:8px" class="filter-label">状态</span>
+    <span class="filter-chip active" data-filter="status" data-val="all">全部</span>
+    <span class="filter-chip" data-filter="status" data-val="draft">📝 草稿</span>
+    <span class="filter-chip" data-filter="status" data-val="submitted">📤 已提交</span>
+    <span class="filter-chip" data-filter="status" data-val="reviewed">👀 科主任已审</span>
+    <span class="filter-chip" data-filter="status" data-val="evaluated">📋 已评价</span>
+    <span class="filter-chip" data-filter="status" data-val="closed">✅ 已闭环</span>
+    <span style="margin-left:8px" class="filter-label">类别</span>
+    <span class="filter-chip active" data-filter="cat" data-val="all">全部</span>
+    <span class="filter-chip" data-filter="cat" data-val="diagnosis">诊治</span>
+    <span class="filter-chip" data-filter="cat" data-val="medication">用药</span>
+    <span class="filter-chip" data-filter="cat" data-val="accident">意外</span>
+    <span class="filter-chip" data-filter="cat" data-val="exam">检查</span>
+    <span class="filter-chip" data-filter="cat" data-val="surgery">手术</span>
+    <span class="filter-chip" data-filter="cat" data-val="communication">医患沟通</span>
+    <span class="filter-chip" data-filter="cat" data-val="other">其他</span>
+  </div>
+
+  <!-- REPORT TABLE -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><span class="icon">📊</span>不良事件台账</span>
+      <button class="btn btn-primary btn-sm" onclick="switchTab('form')">➕ 新增报告</button>
+    </div>
+    <div id="reportTableContainer"></div>
+  </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- TAB 3: STATISTICS -->
+<!-- ================================================================ -->
+<div class="tab-content" id="tab-stats">
+  <div class="card">
+    <div class="card-header"><span class="card-title"><span class="icon">📈</span>不良事件统计分析</span></div>
+    <div id="statsContent"></div>
+  </div>
+</div>
+
+</main>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeDetailModal()">
+  <div class="modal" id="detailModalBox"></div>
+</div>
+
+<footer class="footer">
+  辽宁中医嘉和医院 医疗质量管理委员会 · 不良事件报告系统 V1.0 · 2026年6月 · 依据《医疗质量安全事件报告暂行规定》
+</footer>
+
+<script>
+// ============================================================
+// CONSTANTS
+// ============================================================
+const STORAGE_KEY = 'ae-reports';
+const CATEGORY_NAMES = {
+  diagnosis: '诊治问题', medication: '不良治疗/用药', accident: '意外事件',
+  exam: '辅助检查问题', surgery: '手术相关问题', communication: '医患沟通', other: '其他'
+};
+const CATEGORY_ICONS = {
+  diagnosis:'🔴', medication:'💊', accident:'⚠️', exam:'🔬', surgery:'🔪', communication:'💬', other:'📌'
+};
+const LOCATION_NAMES = ['急诊','门诊','住院部','医技部门','行政后勤部门','其它'];
+const STATUS_FLOW = ['draft','submitted','reviewed','evaluated','closed'];
+const STATUS_LABELS = { draft:'草稿', submitted:'已提交', reviewed:'科主任已审', evaluated:'已评价', closed:'已闭环' };
+const STATUS_ICONS = { draft:'📝', submitted:'📤', reviewed:'👀', evaluated:'📋', closed:'✅' };
+
+// ============================================================
+// DATA
+// ============================================================
+function loadReports() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e) { return []; }
+}
+function saveReports(reports) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-'+tab));
+  if(tab === 'dashboard') renderDashboard();
+  if(tab === 'stats') renderStats();
+  updateBadges();
+}
+
+// ============================================================
+// FORM INTERACTIONS
+// ============================================================
+function toggleCat(card) {
+  card.classList.toggle('selected');
+}
+function selectSeverity(card) {
+  document.querySelectorAll('.severity-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('d_level_input').value = card.dataset.level;
+}
+function toggleConsequenceDetail() {
+  const v = document.querySelector('input[name="b_consequence"]:checked');
+  document.getElementById('consequenceDetailRow').style.display = v && v.value === '有' ? 'grid' : 'none';
+}
+
+function getSelectedCats() {
+  const selected = [];
+  document.querySelectorAll('#catGrid .cat-card.selected').forEach(c => selected.push(c.dataset.cat));
+  return selected;
+}
+
+// ============================================================
+// SUBMIT / SAVE DRAFT
+// ============================================================
+function submitReport(e) {
+  e.preventDefault();
+  const form = document.getElementById('reportForm');
+  const cats = getSelectedCats();
+  if(cats.length === 0) { alert('请至少选择一个不良事件类别（C区）'); return; }
+  if(!document.getElementById('d_level_input').value) { alert('请选择不良事件等级（D区）'); return; }
+
+  const report = buildReportFromForm('submitted');
+  report.id = generateId();
+  report.createdAt = new Date().toISOString();
+  report.status = 'submitted';
+
+  const reports = loadReports();
+  reports.unshift(report);
+  saveReports(reports);
+
+  form.reset();
+  document.querySelectorAll('.cat-card.selected').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.severity-card.selected').forEach(c => c.classList.remove('selected'));
+  document.getElementById('d_level_input').value = '';
+  document.getElementById('consequenceDetailRow').style.display = 'none';
+
+  alert('✅ 报告提交成功！\n\n已进入审核流程：科主任审核 → 主管部门评价 → 持续改进 → 闭环归档');
+  updateBadges();
+  switchTab('dashboard');
+}
+
+function saveDraft() {
+  const form = document.getElementById('reportForm');
+  const report = buildReportFromForm('draft');
+  report.id = generateId();
+  report.createdAt = new Date().toISOString();
+  report.status = 'draft';
+
+  const reports = loadReports();
+  // Replace existing draft with same id if editing
+  const existingIdx = reports.findIndex(r => r.id === report.id);
+  if(existingIdx >= 0) reports[existingIdx] = report;
+  else reports.unshift(report);
+  saveReports(reports);
+
+  alert('💾 草稿已保存！可在"事件台账"中继续编辑。');
+  updateBadges();
+}
+
+function buildReportFromForm(defaultStatus) {
+  const form = document.getElementById('reportForm');
+  const fd = new FormData(form);
+  const cats = getSelectedCats();
+  return {
+    id: '', createdAt: '', status: defaultStatus,
+    // A
+    a_name: fd.get('a_name') || '',
+    a_record_id: fd.get('a_record_id') || '',
+    a_gender: fd.get('a_gender') || '',
+    a_age: fd.get('a_age') || '',
+    a_occupation: fd.get('a_occupation') || '',
+    a_treatment_time: fd.get('a_treatment_time') || '',
+    a_diagnosis: fd.get('a_diagnosis') || '',
+    // B
+    b_related: fd.get('b_related') || '',
+    b_location: fd.get('b_location') || '',
+    b_consequence: fd.get('b_consequence') || '',
+    b_consequence_detail: fd.get('b_consequence_detail') || '',
+    b_description: fd.get('b_description') || '',
+    // C
+    c_categories: cats,
+    // D
+    d_level: fd.get('d_level') || '',
+    // E
+    e_cause: fd.get('e_cause') || '',
+    e_action: fd.get('e_action') || '',
+    // F
+    f_evaluation: fd.get('f_evaluation') || '',
+    // G
+    g_improvement: fd.get('g_improvement') || '',
+    // H
+    h_role: fd.get('h_role') || '',
+    h_category: fd.get('h_category') || '',
+    h_title: fd.get('h_title') || '',
+    h_name: fd.get('h_name') || '',
+    h_dept: fd.get('h_dept') || '',
+    h_phone: fd.get('h_phone') || ''
+  };
+}
+
+function generateId() {
+  const now = new Date();
+  return 'AE' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0')
+    + '-' + String(Math.floor(Math.random()*1000)).padStart(3,'0');
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+let dashboardFilters = { level: 'all', status: 'all', cat: 'all' };
+
+function renderDashboard() {
+  const reports = loadReports();
+  const filtered = reports.filter(r => {
+    if(dashboardFilters.status !== 'all' && r.status !== dashboardFilters.status) return false;
+    if(dashboardFilters.level !== 'all' && r.d_level !== dashboardFilters.level) return false;
+    if(dashboardFilters.cat !== 'all' && !(r.c_categories||[]).includes(dashboardFilters.cat)) return false;
+    return true;
+  });
+
+  // Stats
+  const total = reports.length;
+  const drafts = reports.filter(r => r.status === 'draft').length;
+  const open = reports.filter(r => r.status !== 'closed' && r.status !== 'draft').length;
+  const closed = reports.filter(r => r.status === 'closed').length;
+  const levelI = reports.filter(r => r.d_level === 'I').length;
+
+  document.getElementById('dashboardStats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">📦 事件总数</div></div>
+    <div class="stat-card" style="border-left:3px solid var(--warning)"><div class="stat-num" style="color:var(--warning)">${open}</div><div class="stat-label">📤 处理中</div></div>
+    <div class="stat-card" style="border-left:3px solid var(--text-secondary)"><div class="stat-num" style="color:var(--text-secondary)">${drafts}</div><div class="stat-label">📝 草稿</div></div>
+    <div class="stat-card" style="border-left:3px solid var(--danger)"><div class="stat-num" style="color:var(--danger)">${levelI}</div><div class="stat-label">🚨 Ⅰ级警告事件</div></div>
+    <div class="stat-card success" style="border-left:3px solid var(--success)"><div class="stat-num">${closed}</div><div class="stat-label">✅ 已闭环</div></div>
+    <div class="stat-card" style="border-left:3px solid var(--primary-light)"><div class="stat-num">${open > 0 ? Math.round(closed/total*100) : 0}%</div><div class="stat-label">📊 闭环率</div></div>
+  `;
+
+  // Table
+  if(filtered.length === 0) {
+    document.getElementById('reportTableContainer').innerHTML = `
+      <div class="empty-state"><div class="empty-icon">📭</div><p>暂无不良事件报告</p><p style="font-size:11px;color:var(--text-secondary)">点击"新增报告"开始填写第一份不良事件报告</p></div>`;
+  } else {
+    let html = `<table class="data-table"><thead><tr>
+      <th>报告编号</th><th>等级</th><th>类别</th><th>场所</th><th>报告人</th><th>科室</th><th>状态</th><th>日期</th><th>操作</th>
+    </tr></thead><tbody>`;
+    filtered.forEach(r => {
+      const cats = (r.c_categories||[]).map(c => CATEGORY_ICONS[c]+CATEGORY_NAMES[c]).join(' ') || '-';
+      html += `<tr onclick="openDetail('${r.id}')">
+        <td style="font-weight:600;color:var(--primary)">${r.id}</td>
+        <td><span style="font-weight:700;color:${r.d_level==='I'?'var(--danger)':r.d_level==='II'?'#e67e22':'var(--text)'}">${r.d_level||'-'}级</span></td>
+        <td style="font-size:11px">${cats}</td>
+        <td>${r.b_location||'-'}</td>
+        <td>${r.h_name||'-'}</td>
+        <td>${r.h_dept||'-'}</td>
+        <td><span class="status-dot status-${r.status}"></span>${STATUS_LABELS[r.status]||r.status}</td>
+        <td style="font-size:11px;white-space:nowrap">${formatDate(r.createdAt)}</td>
+        <td onclick="event.stopPropagation()">
+          ${r.status==='draft' ? `<button class="btn btn-sm btn-primary" onclick="editDraft('${r.id}')">✏️ 编辑</button>` : ''}
+          <button class="btn btn-sm btn-outline" style="border-color:var(--danger);color:var(--danger)" onclick="deleteReport('${r.id}')">🗑️</button>
+        </td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('reportTableContainer').innerHTML = html;
+  }
+}
+
+function editDraft(id) {
+  const reports = loadReports();
+  const r = reports.find(x => x.id === id);
+  if(!r) return;
+
+  // Switch to form and fill in the data
+  switchTab('form');
+  setTimeout(() => {
+    fillForm(r);
+    // Remove the old draft so it doesn't duplicate
+    const updated = reports.filter(x => x.id !== id);
+    saveReports(updated);
+  }, 200);
+}
+
+function fillForm(r) {
+  // A
+  document.querySelector('input[name="a_name"]').value = r.a_name || '';
+  document.querySelector('input[name="a_record_id"]').value = r.a_record_id || '';
+  if(r.a_gender) { const rb = document.querySelector(`input[name="a_gender"][value="${r.a_gender}"]`); if(rb) rb.checked = true; }
+  document.querySelector('input[name="a_age"]').value = r.a_age || '';
+  document.querySelector('input[name="a_occupation"]').value = r.a_occupation || '';
+  document.querySelector('input[name="a_treatment_time"]').value = r.a_treatment_time || '';
+  document.querySelector('input[name="a_diagnosis"]').value = r.a_diagnosis || '';
+  // B
+  document.querySelector('input[name="b_related"]').value = r.b_related || '';
+  if(r.b_location) { const rb = document.querySelector(`input[name="b_location"][value="${r.b_location}"]`); if(rb) rb.checked = true; }
+  if(r.b_consequence) { const rb = document.querySelector(`input[name="b_consequence"][value="${r.b_consequence}"]`); if(rb) { rb.checked = true; toggleConsequenceDetail(); } }
+  document.querySelector('textarea[name="b_consequence_detail"]').value = r.b_consequence_detail || '';
+  document.querySelector('textarea[name="b_description"]').value = r.b_description || '';
+  // C
+  document.querySelectorAll('#catGrid .cat-card').forEach(c => c.classList.toggle('selected', (r.c_categories||[]).includes(c.dataset.cat)));
+  // D
+  if(r.d_level) { const sc = document.querySelector(`.severity-card[data-level="${r.d_level}"]`); if(sc) selectSeverity(sc); }
+  // E
+  document.querySelector('textarea[name="e_cause"]').value = r.e_cause || '';
+  document.querySelector('textarea[name="e_action"]').value = r.e_action || '';
+  // F
+  document.querySelector('textarea[name="f_evaluation"]').value = r.f_evaluation || '';
+  // G
+  document.querySelector('textarea[name="g_improvement"]').value = r.g_improvement || '';
+  // H
+  if(r.h_role) { const rb = document.querySelector(`input[name="h_role"][value="${r.h_role}"]`); if(rb) rb.checked = true; }
+  if(r.h_category) { const rb = document.querySelector(`input[name="h_category"][value="${r.h_category}"]`); if(rb) rb.checked = true; }
+  if(r.h_title) { const rb = document.querySelector(`input[name="h_title"][value="${r.h_title}"]`); if(rb) rb.checked = true; }
+  document.querySelector('input[name="h_name"]').value = r.h_name || '';
+  document.querySelector('input[name="h_dept"]').value = r.h_dept || '';
+  document.querySelector('input[name="h_phone"]').value = r.h_phone || '';
+}
+
+function deleteReport(id) {
+  const r = loadReports().find(x => x.id === id);
+  if(!r) return;
+  if(!confirm(`确定要删除报告 ${id} 吗？\n\n此操作不可撤销。`)) return;
+  const reports = loadReports().filter(x => x.id !== id);
+  saveReports(reports);
+  renderDashboard();
+  updateBadges();
+}
+
+// ============================================================
+// DETAIL MODAL
+// ============================================================
+function openDetail(id) {
+  const r = loadReports().find(x => x.id === id);
+  if(!r) return;
+
+  const cats = (r.c_categories||[]).map(c => CATEGORY_ICONS[c]+' '+CATEGORY_NAMES[c]).join('<br>');
+  const canAdvance = STATUS_FLOW.indexOf(r.status) < STATUS_FLOW.length - 1;
+
+  document.getElementById('detailModalBox').innerHTML = `
+    <div class="modal-header">
+      <div><strong style="font-size:15px">${r.id}</strong>
+        <span class="status-dot status-${r.status}" style="margin-left:8px"></span>${STATUS_LABELS[r.status]||r.status}
+        ${r.d_level ? `<span style="margin-left:8px;font-weight:700;color:${r.d_level==='I'?'var(--danger)':r.d_level==='II'?'#e67e22':'var(--text)'}">${r.d_level}级事件</span>` : ''}
+      </div>
+      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-row"><span class="info-label">📅 报告日期</span><span>${formatDate(r.createdAt)}</span></div>
+      <div class="info-row"><span class="info-label">📅 事件日期</span><span>${r.a_treatment_time||'-'}</span></div>
+
+      <div class="section-block"><h4>🅰️ 患者资料</h4>
+        <div class="info-row"><span class="info-label">患者姓名</span><span style="font-weight:600;font-size:14px">${r.a_name||'-'}</span></div>
+        <div class="info-row"><span class="info-label">病历号/住院号</span><span>${r.a_record_id||'-'}</span></div>
+        <div class="info-row"><span class="info-label">性别/年龄</span><span>${r.a_gender||'-'} / ${r.a_age||'-'}</span></div>
+        <div class="info-row"><span class="info-label">职别</span><span>${r.a_occupation||'-'}</span></div>
+        <div class="info-row"><span class="info-label">诊疗时间</span><span>${r.a_treatment_time||'-'}</span></div>
+        <div class="info-row"><span class="info-label">临床诊断</span><span>${r.a_diagnosis||'-'}</span></div>
+      </div>
+
+      <div class="section-block"><h4>🅱️ 不良事件情况</h4>
+        <div class="info-row"><span class="info-label">相关人员/科室</span><span>${r.b_related||'-'}</span></div>
+        <div class="info-row"><span class="info-label">发生场所</span><span>${r.b_location||'-'}</span></div>
+        <div class="info-row"><span class="info-label">不良后果</span><span>${r.b_consequence||'-'} ${r.b_consequence_detail||''}</span></div>
+        <div class="info-row"><span class="info-label">事件经过</span><span style="white-space:pre-wrap">${r.b_description||'-'}</span></div>
+      </div>
+
+      <div class="section-block"><h4>🅲 不良事件类别</h4>
+        <p style="font-size:13px">${cats||'-'}</p>
+      </div>
+
+      <div class="section-block"><h4>🅴 处理与分析</h4>
+        <div class="info-row"><span class="info-label">可能原因</span><span style="white-space:pre-wrap">${r.e_cause||'-'}</span></div>
+        <div class="info-row"><span class="info-label">处理措施</span><span style="white-space:pre-wrap">${r.e_action||'-'}</span></div>
+      </div>
+
+      ${r.f_evaluation ? `<div class="section-block"><h4>🅵 主管部门评价</h4><p style="font-size:13px;white-space:pre-wrap">${r.f_evaluation}</p></div>` : ''}
+      ${r.g_improvement ? `<div class="section-block"><h4>🅶 持续改进措施</h4><p style="font-size:13px;white-space:pre-wrap">${r.g_improvement}</p></div>` : ''}
+
+      <div class="section-block"><h4>🅷 报告人信息</h4>
+        <div class="info-row"><span class="info-label">报告人</span><span>${r.h_name||'-'} · ${r.h_role||'-'} · ${r.h_title||'-'}</span></div>
+        <div class="info-row"><span class="info-label">科室</span><span>${r.h_dept||'-'}</span></div>
+        <div class="info-row"><span class="info-label">电话</span><span>${r.h_phone||'-'}</span></div>
+        <div class="info-row"><span class="info-label">当事人类别</span><span>${r.h_category||'-'}</span></div>
+      </div>
+
+      <div class="modal-actions">
+        ${canAdvance ? `<button class="btn btn-primary btn-sm" onclick="advanceStatus('${r.id}');closeDetailModal()">▶ 推进状态：${STATUS_LABELS[STATUS_FLOW[STATUS_FLOW.indexOf(r.status)+1]]}</button>` : ''}
+        ${r.status === 'draft' ? `<button class="btn btn-primary btn-sm" onclick="editDraft('${r.id}');closeDetailModal()">✏️ 编辑草稿</button>` : ''}
+        <button class="btn btn-outline btn-sm" style="border-color:var(--primary);color:var(--primary)" onclick="window.print();closeDetailModal()">🖨️ 打印</button>
+        <button class="btn btn-outline btn-sm" style="border-color:var(--danger);color:var(--danger)" onclick="if(confirm('删除？')){deleteReport('${r.id}');closeDetailModal();renderDashboard();}">🗑️ 删除</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+
+function advanceStatus(id) {
+  const reports = loadReports();
+  const r = reports.find(x => x.id === id);
+  if(!r) return;
+  const idx = STATUS_FLOW.indexOf(r.status);
+  if(idx < STATUS_FLOW.length - 1) {
+    r.status = STATUS_FLOW[idx + 1];
+    saveReports(reports);
+    renderDashboard();
+    updateBadges();
+  }
+}
+
+// ============================================================
+// STATISTICS
+// ============================================================
+function renderStats() {
+  const reports = loadReports();
+  if(reports.length === 0) {
+    document.getElementById('statsContent').innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><p>暂无数据，请先提交不良事件报告</p></div>';
+    return;
+  }
+
+  // By level
+  const levelCount = {I:0,II:0,III:0,IV:0};
+  reports.forEach(r => { if(r.d_level) levelCount[r.d_level] = (levelCount[r.d_level]||0) + 1; });
+
+  // By category
+  const catCount = {};
+  reports.forEach(r => { (r.c_categories||[]).forEach(c => { catCount[c] = (catCount[c]||0) + 1; }); });
+
+  // By location
+  const locCount = {};
+  reports.forEach(r => { if(r.b_location) locCount[r.b_location] = (locCount[r.b_location]||0) + 1; });
+
+  // By month
+  const monthCount = {};
+  reports.forEach(r => {
+    const m = r.createdAt ? r.createdAt.substring(0,7) : 'unknown';
+    monthCount[m] = (monthCount[m]||0) + 1;
+  });
+
+  // By department
+  const deptCount = {};
+  reports.forEach(r => { if(r.h_dept) deptCount[r.h_dept] = (deptCount[r.h_dept]||0) + 1; });
+
+  let html = '';
+
+  // Level distribution
+  html += '<h4 style="margin:16px 0 8px;color:var(--primary)">🚨 按事件等级分布</h4>';
+  html += '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">';
+  ['I','II','III','IV'].forEach(l => {
+    const pct = reports.length ? Math.round((levelCount[l]||0)/reports.length*100) : 0;
+    html += `<div style="flex:1;min-width:100px;background:var(--card);border-radius:8px;padding:12px;text-align:center;border:2px solid var(--border)">
+      <div style="font-size:28px;font-weight:900;color:${l==='I'?'var(--danger)':l==='II'?'#e67e22':l==='III'?'var(--warning)':'var(--success)'}">${levelCount[l]||0}</div>
+      <div style="font-size:11px;color:var(--text-secondary)">${l}级 · ${pct}%</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // Category distribution
+  html += '<h4 style="margin:16px 0 8px;color:var(--primary)">📂 按事件类别分布</h4>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">';
+  Object.entries(catCount).sort((a,b) => b[1]-a[1]).forEach(([k,v]) => {
+    html += `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px">${CATEGORY_ICONS[k]} ${CATEGORY_NAMES[k]}: <strong>${v}</strong></div>`;
+  });
+  html += '</div>';
+
+  // Department ranking
+  html += '<h4 style="margin:16px 0 8px;color:var(--primary)">🏥 按科室分布（Top 10）</h4>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">';
+  Object.entries(deptCount).sort((a,b) => b[1]-a[1]).slice(0,10).forEach(([k,v]) => {
+    html += `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px">🏢 ${k}: <strong>${v}</strong></div>`;
+  });
+  html += '</div>';
+
+  // Location distribution
+  html += '<h4 style="margin:16px 0 8px;color:var(--primary)">📍 按发生场所分布</h4>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">';
+  LOCATION_NAMES.forEach(loc => {
+    const cnt = locCount[loc] || 0;
+    html += `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px">${loc}: <strong>${cnt}</strong></div>`;
+  });
+  html += '</div>';
+
+  // Monthly trend
+  html += '<h4 style="margin:16px 0 8px;color:var(--primary)">📅 月度趋势</h4>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
+  Object.entries(monthCount).sort().forEach(([k,v]) => {
+    html += `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px">📅 ${k}: <strong>${v}起</strong></div>`;
+  });
+  html += '</div>';
+
+  document.getElementById('statsContent').innerHTML = html;
+}
+
+// ============================================================
+// FILTER BAR
+// ============================================================
+document.addEventListener('click', function(e) {
+  const chip = e.target.closest('.filter-chip');
+  if(!chip || !chip.dataset.filter) return;
+  const filterType = chip.dataset.filter;
+  const val = chip.dataset.val;
+
+  const bar = chip.closest('.filter-bar');
+  bar.querySelectorAll(`.filter-chip[data-filter="${filterType}"]`).forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+
+  dashboardFilters[filterType] = val;
+  renderDashboard();
+});
+
+// ============================================================
+// UTILS
+// ============================================================
+function formatDate(iso) {
+  if(!iso) return '-';
+  const d = new Date(iso);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
+    + ' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function updateBadges() {
+  const reports = loadReports();
+  const count = reports.length;
+  const drafts = reports.filter(r => r.status === 'draft').length;
+  document.getElementById('badgeCount').textContent = count;
+  document.getElementById('badgeNew').textContent = drafts > 0 ? `${drafts}草稿` : '新建';
+  if(drafts > 0) document.getElementById('badgeNew').classList.add('warn');
+  else document.getElementById('badgeNew').classList.remove('warn');
+}
+
+// ============================================================
+// BATCH IMPORT
+// ============================================================
+let batchParsedRows = [];
+let batchHeaders = [];
+let batchFieldMap = {}; // header -> form field name
+
+const BATCH_FIELD_OPTIONS = [
+  { value: '', label: '-- 跳过 --' },
+  { value: 'a_name', label: '🅰️ 患者姓名' },
+  { value: 'a_record_id', label: '🅰️ 病历号/住院号' },
+  { value: 'a_gender', label: '🅰️ 性别' },
+  { value: 'a_age', label: '🅰️ 年龄' },
+  { value: 'a_occupation', label: '🅰️ 职别' },
+  { value: 'a_treatment_time', label: '🅰️ 诊疗时间' },
+  { value: 'a_diagnosis', label: '🅰️ 临床诊断' },
+  { value: 'b_location', label: '🅱️ 事件发生场所' },
+  { value: 'b_related', label: '🅱️ 相关人员/科室' },
+  { value: 'b_consequence', label: '🅱️ 不良后果(无/有)' },
+  { value: 'b_consequence_detail', label: '🅱️ 不良后果详情' },
+  { value: 'b_description', label: '🅱️ 事件经过' },
+  { value: 'e_cause', label: '🅴 可能原因' },
+  { value: 'e_action', label: '🅴 处理措施' },
+  { value: 'h_name', label: '🅷 报告人姓名' },
+  { value: 'h_dept', label: '🅷 科室' },
+  { value: 'h_role', label: '🅷 报告人身份' },
+  { value: 'h_phone', label: '🅷 联系电话' },
+];
+
+function toggleBatch() {
+  const body = document.getElementById('batchBody');
+  const toggle = document.getElementById('batchToggle');
+  if(body.style.display === 'none') {
+    body.style.display = 'block';
+    toggle.textContent = '收起 ▲';
+  } else {
+    body.style.display = 'none';
+    toggle.textContent = '展开 ▼';
+  }
+}
+
+function downloadTemplate() {
+  const headers = ['患者姓名','病历号/住院号','性别','年龄','职别','诊疗时间','临床诊断','事件发生场所','相关人员/科室','不良后果(无/有)','不良后果详情','事件经过','可能原因','处理措施','报告人姓名','报告人身份','科室','联系电话'];
+  const example = ['张三','ZY20260001','男','65','退休','2026-06-12T10:30','腰痛病','门诊','针灸科/王医生','有','局部血肿','埋线后出现皮下血肿','操作深度不当','冰敷+观察','李医生','医师','针灸科','13800001111'];
+  const bom = '﻿';
+  const csv = bom + headers.join(',') + '\n' + example.join(',');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '不良事件批量导入模板.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function handleBatchFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if(ext === 'csv') {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const text = e.target.result;
+      parseCSVText(text);
+    };
+    reader.readAsText(file, 'UTF-8');
+  } else if(ext === 'xlsx' || ext === 'xls') {
+    parseExcelFile(file);
+  } else {
+    alert('不支持的文件格式。请使用 CSV (.csv) 或 Excel (.xlsx) 文件。');
+  }
+}
+
+function parseCSVText(text) {
+  // Remove BOM
+  if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+  const lines = text.split(/\r?\n/).filter(line => line.trim());
+  if(lines.length < 2) { alert('CSV 文件至少需要标题行+1行数据'); return; }
+
+  // Simple CSV parser (handles quoted fields)
+  function parseCSVLine(line) {
+    const result = [];
+    let current = '', inQuotes = false;
+    for(let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if(inQuotes) {
+        if(ch === '"') {
+          if(i+1 < line.length && line[i+1] === '"') { current += '"'; i++; }
+          else inQuotes = false;
+        } else current += ch;
+      } else {
+        if(ch === '"') inQuotes = true;
+        else if(ch === ',') { result.push(current.trim()); current = ''; }
+        else current += ch;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+
+  batchHeaders = parseCSVLine(lines[0]);
+  batchParsedRows = [];
+  for(let i = 1; i < lines.length; i++) {
+    const values = parseCSVLine(lines[i]);
+    if(values.length > 0 && values.some(v => v)) {
+      const row = {};
+      batchHeaders.forEach((h, j) => { row[h] = values[j] || ''; });
+      batchParsedRows.push(row);
+    }
+  }
+  showMappingAndPreview();
+  input.value = '';
+}
+
+function parseExcelFile(file) {
+  // Load SheetJS dynamically
+  if(typeof XLSX === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+    script.onload = function() { parseExcelFile(file); };
+    script.onerror = function() { alert('加载 Excel 解析库失败，请检查网络连接。\n\n备选方案：在 Excel 中另存为 CSV 格式后上传。'); };
+    document.head.appendChild(script);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type: 'array'});
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data = XLSX.utils.sheet_to_json(ws, {header: 1, defval: ''});
+
+      if(data.length < 2) { alert('Excel 文件至少需要标题行+1行数据'); return; }
+
+      batchHeaders = data[0].map(h => String(h).trim());
+      batchParsedRows = [];
+      for(let i = 1; i < data.length; i++) {
+        const row = {};
+        batchHeaders.forEach((h, j) => { row[h] = String(data[i][j] || '').trim(); });
+        if(Object.values(row).some(v => v)) batchParsedRows.push(row);
+      }
+      showMappingAndPreview();
+    } catch(err) {
+      alert('Excel 解析失败: ' + err.message + '\n\n请尝试在 Excel 中另存为 CSV 格式后上传。');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  input.value = '';
+}
+
+function parsePastedData() {
+  const text = document.getElementById('batchPasteArea').value;
+  if(!text.trim()) { alert('请先粘贴数据'); return; }
+
+  const lines = text.split(/\r?\n/).filter(line => line.trim());
+  if(lines.length < 2) { alert('至少需要标题行+1行数据。第一行作为列名。'); return; }
+
+  // Detect delimiter: tab or comma
+  const delim = lines[0].includes('\t') ? '\t' : ',';
+
+  batchHeaders = lines[0].split(delim).map(h => h.trim());
+  batchParsedRows = [];
+  for(let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(delim).map(v => v.trim());
+    const row = {};
+    batchHeaders.forEach((h, j) => { row[h] = values[j] || ''; });
+    if(Object.values(row).some(v => v)) batchParsedRows.push(row);
+  }
+  showMappingAndPreview();
+}
+
+function showMappingAndPreview() {
+  if(batchParsedRows.length === 0) { alert('未解析到有效数据'); return; }
+
+  // Show mapping area
+  document.getElementById('batchMappingArea').style.display = 'block';
+  document.getElementById('batchPreviewArea').style.display = 'block';
+
+  // Auto-map columns by fuzzy matching
+  batchFieldMap = {};
+  batchHeaders.forEach(h => {
+    const hLower = h.toLowerCase().replace(/\s/g, '');
+    // Try exact match first
+    for(const opt of BATCH_FIELD_OPTIONS) {
+      if(!opt.value) continue;
+      const label = opt.label.replace(/[🅰️🅱️🅲🅳🅴🅵🅶🅷]/g, '').trim();
+      if(h === label || hLower === label.toLowerCase().replace(/\s/g, '')) {
+        batchFieldMap[h] = opt.value; break;
+      }
+    }
+    // Fuzzy match
+    if(!batchFieldMap[h]) {
+      const fuzzyMap = {
+        '姓名': 'a_name', '患者': 'a_name', '名字': 'a_name', 'name': 'a_name',
+        '病历号': 'a_record_id', '住院号': 'a_record_id', '登记号': 'a_record_id', 'id': 'a_record_id',
+        '性别': 'a_gender', 'gender': 'a_gender', 'sex': 'a_gender',
+        '年龄': 'a_age', 'age': 'a_age',
+        '诊断': 'a_diagnosis', 'diagnosis': 'a_diagnosis',
+        '场所': 'b_location', '地点': 'b_location', 'location': 'b_location',
+        '科室': 'h_dept', '部门': 'h_dept', 'dept': 'h_dept',
+        '报告人': 'h_name', '上报人': 'h_name',
+        '电话': 'h_phone', 'phone': 'h_phone', 'tel': 'h_phone',
+      };
+      for(const [keyword, field] of Object.entries(fuzzyMap)) {
+        if(hLower.includes(keyword.toLowerCase())) { batchFieldMap[h] = field; break; }
+      }
+    }
+  });
+
+  // Build mapping selects
+  let mapHTML = '';
+  batchHeaders.forEach(h => {
+    const mapped = batchFieldMap[h] || '';
+    mapHTML += `<div style="display:flex;flex-direction:column;gap:2px;font-size:11px">
+      <span style="color:var(--text-secondary)">"${h}"</span>
+      <select class="form-select" style="font-size:11px;padding:4px 8px" onchange="batchFieldMap['${h.replace(/'/g,"\\'")}'] = this.value; refreshBatchPreview()">
+        ${BATCH_FIELD_OPTIONS.map(o => `<option value="${o.value}" ${o.value===mapped?'selected':''}>${o.label}</option>`).join('')}
+      </select>
+    </div>`;
+  });
+  document.getElementById('batchMappingSelects').innerHTML = mapHTML;
+
+  refreshBatchPreview();
+}
+
+function refreshBatchPreview() {
+  // Build preview rows using mapped fields
+  const fieldsToShow = ['a_name','a_record_id','a_gender','a_age','a_diagnosis','b_location','h_dept','h_name'];
+  let html = '<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#f0f4f8">';
+
+  fieldsToShow.forEach(f => {
+    const label = BATCH_FIELD_OPTIONS.find(o => o.value === f);
+    html += `<th style="padding:6px 8px;border:1px solid var(--border);text-align:left">${label?label.label:f}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  const mappedRows = batchParsedRows.map(row => {
+    const mapped = {};
+    for(const [header, field] of Object.entries(batchFieldMap)) {
+      if(field && row[header]) mapped[field] = row[header];
+    }
+    return mapped;
+  });
+
+  mappedRows.forEach(row => {
+    html += '<tr>';
+    fieldsToShow.forEach(f => {
+      html += `<td style="padding:6px 8px;border:1px solid var(--border)">${row[f]||''}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('batchPreviewTable').innerHTML = html;
+  document.getElementById('batchImportCount').textContent = batchParsedRows.length;
+}
+
+function batchImport() {
+  if(batchParsedRows.length === 0) return;
+  if(!confirm(`确定要导入 ${batchParsedRows.length} 条记录吗？\n\n每条将保存为草稿，可在"事件台账"中继续编辑。`)) return;
+
+  const reports = loadReports();
+  let imported = 0;
+
+  batchParsedRows.forEach(row => {
+    const mapped = {};
+    for(const [header, field] of Object.entries(batchFieldMap)) {
+      if(field && row[header]) mapped[field] = row[header];
+    }
+
+    // Only import if at least patient name or record ID is present
+    if(!mapped['a_name'] && !mapped['a_record_id']) return;
+
+    const report = {
+      id: generateId(),
+      createdAt: new Date().toISOString(),
+      status: 'draft',
+      a_name: mapped['a_name'] || '',
+      a_record_id: mapped['a_record_id'] || '',
+      a_gender: mapped['a_gender'] || '',
+      a_age: mapped['a_age'] || '',
+      a_occupation: mapped['a_occupation'] || '',
+      a_treatment_time: mapped['a_treatment_time'] || '',
+      a_diagnosis: mapped['a_diagnosis'] || '',
+      b_related: mapped['b_related'] || '',
+      b_location: mapped['b_location'] || '',
+      b_consequence: mapped['b_consequence'] || '',
+      b_consequence_detail: mapped['b_consequence_detail'] || '',
+      b_description: mapped['b_description'] || '',
+      c_categories: [],
+      d_level: '',
+      e_cause: mapped['e_cause'] || '',
+      e_action: mapped['e_action'] || '',
+      f_evaluation: '',
+      g_improvement: '',
+      h_role: mapped['h_role'] || '',
+      h_category: '',
+      h_title: '',
+      h_name: mapped['h_name'] || '',
+      h_dept: mapped['h_dept'] || '',
+      h_phone: mapped['h_phone'] || '',
+    };
+    reports.unshift(report);
+    imported++;
+  });
+
+  saveReports(reports);
+  cancelBatch();
+  updateBadges();
+  alert(`✅ 成功导入 ${imported} 条记录！\n\n已保存为草稿，切换到"事件台账"页签查看。`);
+}
+
+function cancelBatch() {
+  batchParsedRows = [];
+  batchHeaders = [];
+  batchFieldMap = {};
+  document.getElementById('batchMappingArea').style.display = 'none';
+  document.getElementById('batchPreviewArea').style.display = 'none';
+  document.getElementById('batchPasteArea').value = '';
+  document.getElementById('batchFileInput').value = '';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  updateBadges();
+  // Pre-load dashboard data
+  if(document.getElementById('tab-dashboard').classList.contains('active')) {
+    renderDashboard();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

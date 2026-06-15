@@ -1,0 +1,19 @@
+# Build artifacts
+dist/
+build/
+*.exe
+*.spec
+__pycache__/
+node_modules/
+
+# Sensitive patient data (HIPAA/privacy)
+training-map/???????/
+**/????/
+*.xps
+*_analysis.json
+*_extracted/
+
+# IDE
+.claude/
+.vscode/
+.idea/

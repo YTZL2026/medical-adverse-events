@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>辽宁中医嘉和医院 · 标准化培训地图</title>
+<style>
+:root {
+  --primary: #1a5276; --primary-light: #2980b9; --gold: #b8860b; --gold-light: #f0c75e;
+  --bg: #f0f4f8; --card: #ffffff; --text: #2c3e50; --text-secondary: #5a6c7d;
+  --border: #dce3ea; --success: #27ae60; --danger: #e74c3c; --warning: #f39c12;
+  --info: #2980b9; --radius: 10px; --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.12); --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --domain-insurance: #1a5276; --domain-medical_record: #2e7d32; --domain-clinical: #c62828;
+  --domain-tcm: #6a1b9a; --domain-regulation: #e65100; --domain-infection: #00838f;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--primary-light);text-decoration:none}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--primary),#0d3b5c);color:#fff;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.15)}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-logo{font-size:26px}
+.header h1{font-size:18px;font-weight:600;letter-spacing:1px}
+.header-sub{font-size:11px;opacity:0.8}
+.header-right{display:flex;align-items:center;gap:10px}
+.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:var(--transition);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-outline{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.btn-outline:hover{background:rgba(255,255,255,0.25)}
+.btn-primary{background:var(--gold);color:#1a1a1a;font-weight:600}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.progress-mini{display:flex;align-items:center;gap:8px;color:#fff;font-size:12px}
+.progress-mini-bar{width:80px;height:5px;background:rgba(255,255,255,0.25);border-radius:3px;overflow:hidden}
+.progress-mini-fill{height:100%;background:var(--gold-light);border-radius:3px;transition:width 0.4s}
+
+/* VIEW SWITCHER */
+.view-bar{display:flex;background:var(--card);border-bottom:2px solid var(--border);padding:0 28px;position:sticky;top:68px;z-index:99;gap:0}
+.view-btn{flex:1;max-width:200px;padding:12px 20px;border:none;background:none;cursor:pointer;font-size:14px;font-weight:500;color:var(--text-secondary);border-bottom:3px solid transparent;transition:var(--transition);white-space:nowrap}
+.view-btn:hover{color:var(--primary);background:#f8fafc}
+.view-btn.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
+
+/* MAIN CONTENT */
+.main-content{padding:20px 28px;max-width:1300px;margin:0 auto}
+.view-panel{display:none}
+.view-panel.active{display:block}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:14px 18px;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-size:28px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+/* FILTER BAR */
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center}
+.filter-label{font-size:12px;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.filter-chip{padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;transition:var(--transition);background:var(--card);user-select:none}
+.filter-chip:hover{border-color:var(--primary-light)}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* DOMAIN GRID */
+.domain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.domain-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:var(--transition)}
+.domain-card:hover{box-shadow:var(--shadow-hover)}
+.domain-header{padding:14px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:#fff;user-select:none}
+.domain-header .domain-icon{font-size:28px;margin-right:10px}
+.domain-header .domain-title{font-weight:700;font-size:15px;flex:1}
+.domain-header .domain-count{font-size:11px;opacity:0.9;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:10px}
+.domain-header .arrow{transition:var(--transition);font-size:12px}
+.domain-header.collapsed .arrow{transform:rotate(-90deg)}
+.domain-body{display:block;padding:0}
+.domain-body.collapsed{display:none}
+
+/* MODULE CARDS */
+.module-item{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:var(--transition);position:relative}
+.module-item:last-child{border-bottom:none}
+.module-item:hover{background:#f8fafc}
+.module-item.done{background:#f0faf4}
+.module-item.done .module-title{color:var(--success)}
+.module-status{flex-shrink:0;margin-top:2px}
+.module-info{flex:1;min-width:0}
+.module-title{font-weight:600;font-size:13px;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.module-subtitle{font-size:11px;color:var(--text-secondary);margin-bottom:4px}
+.module-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.module-check{flex-shrink:0;margin-top:2px}
+
+/* BADGES */
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
+.badge-success{background:#eafaf1;color:var(--success)}
+.badge-warning{background:#fef9e7;color:var(--warning)}
+.badge-info{background:#eaf4fd;color:var(--info)}
+.badge-danger{background:#fdedec;color:var(--danger)}
+.badge-domain{color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap}
+
+/* CHECKBOX */
+.cl-cb{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid #bdc3c7;border-radius:4px;flex-shrink:0;cursor:pointer;transition:var(--transition);position:relative}
+.cl-cb:checked{background:var(--success);border-color:var(--success)}
+.cl-cb:checked::after{content:'✓';position:absolute;top:-1px;left:3px;color:#fff;font-weight:700;font-size:12px}
+
+/* H2 TIMELINE */
+.timeline{position:relative;padding:10px 0}
+.timeline::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:3px;background:var(--border);border-radius:2px}
+.tl-month{margin-bottom:24px;position:relative;padding-left:48px}
+.tl-month::before{content:attr(data-month);position:absolute;left:0;top:2px;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:var(--primary);color:#fff;font-weight:800;font-size:14px;z-index:1}
+.tl-month.done::before{background:var(--success)}
+.tl-month.active::before{background:var(--gold);color:#1a1a1a;box-shadow:0 0 0 4px rgba(184,134,11,0.2)}
+.tl-month-header{font-weight:700;font-size:16px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.tl-month-note{font-size:12px;color:var(--text-secondary);margin-bottom:10px}
+.tl-modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.tl-module{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;transition:var(--transition)}
+.tl-module:hover{border-color:var(--primary-light);box-shadow:var(--shadow)}
+.tl-module.done{background:#f0faf4;border-color:#a3d9b1}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:200;justify-content:center;align-items:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);max-width:640px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2)}
+.modal-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-secondary);padding:4px 8px;border-radius:4px}
+.modal-close:hover{background:#f0f0f0}
+.modal-body{padding:20px}
+.modal-section{margin-bottom:16px}
+.modal-section h4{font-size:12px;text-transform:uppercase;color:var(--text-secondary);margin-bottom:8px;letter-spacing:1px}
+.modal-file-link{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;font-size:12px;transition:var(--transition);margin-bottom:4px;cursor:pointer;border:1px solid transparent}
+.modal-file-link:hover{background:#f0f7ff;border-color:var(--primary-light)}
+.modal-file-link a{color:var(--primary-light);text-decoration:none;word-break:break-all}
+.modal-file-link a:hover{text-decoration:underline}
+.file-icon{font-size:18px;flex-shrink:0}
+
+/* MOTTO BANNER */
+.motto{background:linear-gradient(135deg,#fef9e7,#fdf2d0);border:2px solid var(--gold);border-radius:var(--radius);padding:16px 20px;text-align:center;margin-bottom:20px;font-weight:600;color:var(--primary)}
+
+/* FOOTER */
+.footer{text-align:center;padding:20px;color:var(--text-secondary);font-size:11px;border-top:1px solid var(--border);background:var(--card);margin-top:20px}
+
+/* PRINT */
+@media print{
+  .header,.view-bar,.filter-bar,.btn,.footer,.stats-row,.module-check{display:none!important}
+  .domain-body{display:block!important}
+  .domain-body.collapsed{display:block!important}
+  .timeline::before{display:none}
+  .tl-module{break-inside:avoid;page-break-inside:avoid}
+  body{font-size:11px}
+  .main-content{padding:0}
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .header{padding:10px 14px}
+  .header h1{font-size:14px}
+  .view-bar{padding:0 8px}
+  .view-btn{padding:10px 12px;font-size:12px}
+  .domain-grid{grid-template-columns:1fr}
+  .main-content{padding:12px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+
+/* ======================== COCKPIT STYLES ======================== */
+.cockpit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px}
+.cockpit-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:var(--transition);border-left:5px solid #ccc;display:flex;flex-direction:column}
+.cockpit-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.cockpit-card-header{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.cockpit-card-icon{font-size:32px;flex-shrink:0}
+.cockpit-card-title{font-weight:700;font-size:14px;line-height:1.3;flex:1}
+.cockpit-card-body{padding:12px 16px;flex:1;display:flex;flex-direction:column;gap:8px}
+.cockpit-card-meta{font-size:11px;color:var(--text-secondary);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cockpit-card-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.cockpit-btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:var(--transition);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.cockpit-btn-primary{background:var(--primary);color:#fff}
+.cockpit-btn-primary:hover{background:#0d3b5c}
+.cockpit-btn-gold{background:var(--gold);color:#fff}
+.cockpit-btn-gold:hover{background:#9a7209}
+.cockpit-btn-outline{background:var(--card);color:var(--primary);border:1.5px solid var(--primary)}
+.cockpit-btn-outline:hover{background:#f0f7ff}
+.cockpit-btn-disabled{background:#e0e0e0;color:#999;cursor:not-allowed;pointer-events:none}
+.cockpit-hero{text-align:center;padding:24px;margin-bottom:16px;background:linear-gradient(135deg,#1a3a52,#1a5276);border-radius:var(--radius);color:#fff}
+.cockpit-hero h2{font-size:22px;margin-bottom:6px}
+.cockpit-hero p{font-size:13px;opacity:0.85}
+.cockpit-hero-actions{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cockpit-ring{display:inline-flex;align-items:center;gap:12px;margin:8px 0}
+.cockpit-ring-donut{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;position:relative}
+.cockpit-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.cockpit-summary-item{background:var(--card);border-radius:8px;padding:12px;text-align:center;box-shadow:var(--shadow)}
+.cockpit-summary-num{font-size:24px;font-weight:800}
+.cockpit-summary-label{font-size:11px;color:var(--text-secondary)}
+.cockpit-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+/* ===== CLINICIAN COCKPIT ===== */
+.clinician-hero{text-align:center;padding:18px 20px 12px;margin-bottom:12px}
+.clinician-hero h2{font-size:20px;color:var(--primary);margin-bottom:2px}
+.clinician-hero .sub{font-size:12px;color:var(--text-secondary)}
+.clinician-progress{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0;font-size:13px;color:var(--text-secondary)}
+.clinician-month{background:linear-gradient(135deg,#fef9e7,#fdf2d0);border:1.5px solid var(--gold);border-radius:var(--radius);padding:12px 16px;margin-bottom:14px}
+.clinician-month-title{font-weight:700;font-size:14px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.clinician-module-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border-radius:8px;margin-bottom:6px;cursor:pointer;transition:var(--transition);border:1px solid var(--border)}
+.clinician-module-row:hover{border-color:var(--primary-light);box-shadow:var(--shadow)}
+.clinician-module-row .cm-icon{font-size:22px;flex-shrink:0}
+.clinician-module-row .cm-info{flex:1;min-width:0}
+.clinician-module-row .cm-title{font-weight:600;font-size:13px}
+.clinician-module-row .cm-meta{font-size:10px;color:var(--text-secondary)}
+.clinician-module-row .cm-btn{padding:6px 14px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:var(--transition)}
+.clinician-module-row .cm-btn:hover{background:#0d3b5c}
+.clinician-module-row .cm-btn.done{background:var(--success);cursor:default}
+.clinician-section-title{font-size:13px;font-weight:700;color:var(--primary);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+/* ===== ADMIN TOGGLE ===== */
+.admin-toggle{font-size:14px;cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);transition:var(--transition);white-space:nowrap}
+.admin-toggle:hover{background:rgba(255,255,255,0.2);color:#fff}
+.admin-toggle.active{background:var(--gold);color:#1a1a1a;border-color:var(--gold);font-weight:700}
+.admin-badge{display:none;font-size:9px;background:var(--gold);color:#1a1a1a;padding:1px 6px;border-radius:8px;font-weight:700;margin-left:4px;vertical-align:middle}
+.admin-badge.show{display:inline-block}
+/* Hide admin elements in clinician mode */
+body.clinician .view-bar{display:none}
+body.clinician .filter-bar{display:none}
+body.clinician .stats-row{display:none}
+body.clinician #view-plan,body.clinician #view-list,body.clinician #view-map{display:none!important}
+body.clinician #view-cockpit{display:block!important}
+@media(max-width:900px){.cockpit-grid{grid-template-columns:1fr} .cockpit-summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <span class="header-logo">🗺️</span>
+    <div>
+      <h1>辽宁中医嘉和医院 · 标准化培训地图</h1>
+      <div class="header-sub">六大培训域 · 19个模块 · H2 2026培训计划</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdminMode()" title="切换管理模式">
+      🔧 <span class="admin-badge" id="adminBadge">管理</span>
+    </button>
+    <div class="progress-mini" id="headerProgress">
+      <span>📋</span>
+      <div class="progress-mini-bar"><div class="progress-mini-fill" id="globalProgressFill" style="width:0%"></div></div>
+      <span id="globalProgressText">0%</span>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="resetAll()">🔄 重置</button>
+    <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ 打印</button>
+  </div>
+</header>
+
+<!-- VIEW SWITCHER -->
+<nav class="view-bar">
+  <button class="view-btn active" data-view="cockpit" onclick="switchView('cockpit')">🚀 驾驶舱</button>
+  <button class="view-btn" data-view="map" onclick="switchView('map')">🗺️ 培训地图</button>
+  <button class="view-btn" data-view="plan" onclick="switchView('plan')">📅 H2 计划</button>
+  <button class="view-btn" data-view="list" onclick="switchView('list')">📋 模块清单</button>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main-content" id="mainContent">
+
+  <!-- MOTTO -->
+  <div class="motto">
+    📐 培训目标：甲级病历率 ≥ 90% · 零丙级病历 · 医保合规100% · 急救人人过关
+  </div>
+
+  <!-- STATS ROW -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="statTotal">19</div><div class="stat-label">📦 培训模块总数</div></div>
+    <div class="stat-card success"><div class="stat-num" id="statComplete">8</div><div class="stat-label">✅ 材料齐全</div></div>
+    <div class="stat-card warning"><div class="stat-num" id="statFramework">5</div><div class="stat-label">🔶 框架已有</div></div>
+    <div class="stat-card info"><div class="stat-num" id="statExtend">3</div><div class="stat-label">📄 文档可延伸</div></div>
+    <div class="stat-card danger"><div class="stat-num" id="statPlanned">3</div><div class="stat-label">📝 待开发</div></div>
+    <div class="stat-card"><div class="stat-num" id="statDone">0</div><div class="stat-label">🎯 已完成培训</div></div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-label">🔍 筛选：</span>
+    <span class="filter-label">培训域</span>
+    <span class="filter-chip active" data-filter="domain" data-val="all">全部</span>
+    <span class="filter-chip" data-filter="domain" data-val="insurance">🛡️ 医保合规</span>
+    <span class="filter-chip" data-filter="domain" data-val="medical_record">📋 病历质控</span>
+    <span class="filter-chip" data-filter="domain" data-val="clinical">🩺 临床技能</span>
+    <span class="filter-chip" data-filter="domain" data-val="tcm">🌿 中医特色</span>
+    <span class="filter-chip" data-filter="domain" data-val="regulation">📜 制度规范</span>
+    <span class="filter-chip" data-filter="domain" data-val="infection">🔬 院感安全</span>
+    <span style="margin-left:12px" class="filter-label">受众</span>
+    <span class="filter-chip active" data-filter="audience" data-val="all">全部</span>
+    <span class="filter-chip" data-filter="audience" data-val="all-staff">🏥 全院必修</span>
+    <span class="filter-chip" data-filter="audience" data-val="doctor">👨‍⚕️ 医师</span>
+    <span class="filter-chip" data-filter="audience" data-val="nurse">👩‍⚕️ 护士</span>
+    <span class="filter-chip" data-filter="audience" data-val="dept">🏢 科室专项</span>
+    <span class="filter-chip" data-filter="audience" data-val="newcomer">🌱 新员工</span>
+    <span style="margin-left:12px" class="filter-label">状态</span>
+    <span class="filter-chip active" data-filter="status" data-val="all">全部</span>
+    <span class="filter-chip" data-filter="status" data-val="complete">✅ 材料齐全</span>
+    <span class="filter-chip" data-filter="status" data-val="framework">🔶 框架已有</span>
+    <span class="filter-chip" data-filter="status" data-val="extend">📄 文档延伸</span>
+    <span class="filter-chip" data-filter="status" data-val="planned">📝 待开发</span>
+  </div>
+
+  <!-- ========== VIEW 0: COCKPIT (clinician) ========== -->
+  <div class="view-panel active" id="view-cockpit">
+    <div class="clinician-hero">
+      <h2>🏥 辽宁中医嘉和医院 · 培训中心</h2>
+      <div class="sub">选择课程，开始学习 — 完成培训后点击「标记完成」</div>
+      <div class="clinician-progress">
+        <span>📋 我的进度</span>
+        <div class="progress-mini-bar" style="width:120px"><div class="progress-mini-fill" id="clinicianProgressFill" style="width:0%;background:var(--gold)"></div></div>
+        <span id="clinicianProgressText" style="font-weight:700;color:var(--gold)">0/8</span>
+      </div>
+    </div>
+    <div class="clinician-month" id="clinicianMonthBox"></div>
+    <div class="clinician-section-title">📚 全部培训课程</div>
+    <div id="clinicianModuleList"></div>
+  </div>
+
+  <!-- ========== VIEW 1: TRAINING MAP ========== -->
+  <div class="view-panel active" id="view-map">
+    <div class="domain-grid" id="domainGrid"></div>
+  </div>
+
+  <!-- ========== VIEW 2: H2 PLAN ========== -->
+  <div class="view-panel" id="view-plan">
+    <div class="timeline" id="timelineH2"></div>
+  </div>
+
+  <!-- ========== VIEW 3: MODULE LIST ========== -->
+  <div class="view-panel" id="view-list">
+    <div id="moduleList"></div>
+  </div>
+
+</main>
+
+<!-- MODULE DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<footer class="footer">
+  辽宁中医嘉和医院 医保办公室 · 培训地图 V1.0 · 2026年6月编制 · 基于《嘉和中医院新版院内培训方案》及百日攻坚培训大纲
+</footer>
+
+<script src="data/modules.js"></script>
+<script>
+// ==================== STATE ====================
+let currentView = 'cockpit';
+let isAdminMode = false;
+let filters = { domain: 'all', audience: 'all', status: 'all' };
+const STORAGE_PREFIX = 'training-map-';
+const PPT_MODULES = ['m01','m02','m03','m14','m15','m16','m17','m18'];
+const PPT_SLIDES = { m01: 18, m02: 17, m03: 12, m14: 20, m15: 14, m16: 10, m17: 16, m18: 13 };
+
+// Get current month's modules
+function getCurrentMonthModules() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 1-12
+  return PPT_MODULES.filter(id => {
+    const m = TRAINING_MODULES.find(x => x.id === id);
+    return m && m.month === month;
+  });
+}
+
+function isDone(id) { return localStorage.getItem(STORAGE_PREFIX + id) === 'true'; }
+function setDone(id, val) { if(val) localStorage.setItem(STORAGE_PREFIX + id, 'true'); else localStorage.removeItem(STORAGE_PREFIX + id); }
+
+// ==================== DOMAIN COLORS ====================
+function domainColor(domainId) {
+  const map = { insurance:'#1a5276', medical_record:'#2e7d32', clinical:'#c62828', tcm:'#6a1b9a', regulation:'#e65100', infection:'#00838f' };
+  return map[domainId] || '#555';
+}
+
+// ==================== VIEW SWITCHER ====================
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.toggle('active', p.id === 'view-'+view));
+  if(view==='cockpit') renderClinicianView();
+  else if(view==='map') renderMap();
+  else if(view==='plan') renderPlan();
+  else if(view==='list') renderList();
+}
+
+// ==================== ADMIN TOGGLE ====================
+function toggleAdminMode() {
+  isAdminMode = !isAdminMode;
+  localStorage.setItem('training-map-admin', isAdminMode ? '1' : '0');
+  applyAdminMode();
+}
+
+function applyAdminMode() {
+  const toggle = document.getElementById('adminToggle');
+  const badge = document.getElementById('adminBadge');
+  const body = document.body;
+  const headerProg = document.getElementById('headerProgress');
+  const viewBar = document.querySelector('.view-bar');
+
+  if(isAdminMode) {
+    body.classList.remove('clinician');
+    toggle.classList.add('active');
+    toggle.innerHTML = '🔧 <span class="admin-badge show" id="adminBadge">管理</span>';
+    headerProg.style.display = 'flex';
+    if(viewBar) viewBar.style.display = 'flex';
+    document.querySelector('.filter-bar').style.display = 'flex';
+    document.querySelector('.stats-row').style.display = 'grid';
+    renderCockpit();
+  } else {
+    body.classList.add('clinician');
+    toggle.classList.remove('active');
+    toggle.innerHTML = '🔧';
+    headerProg.style.display = 'none';
+    if(viewBar) viewBar.style.display = 'none';
+    document.querySelector('.filter-bar').style.display = 'none';
+    document.querySelector('.stats-row').style.display = 'none';
+    document.querySelectorAll('.view-panel').forEach(p => p.classList.toggle('active', p.id === 'view-cockpit'));
+    renderClinicianView();
+  }
+}
+
+// ==================== CLINICIAN VIEW ====================
+function renderClinicianView() {
+  const pptMods = PPT_MODULES.map(id => TRAINING_MODULES.find(m => m.id === id)).filter(Boolean);
+  const doneCount = pptMods.filter(m => isDone(m.id)).length;
+  const total = pptMods.length;
+  const pct = total ? Math.round(doneCount/total*100) : 0;
+
+  // Progress
+  document.getElementById('clinicianProgressFill').style.width = pct + '%';
+  document.getElementById('clinicianProgressText').textContent = doneCount + '/' + total;
+
+  // Current month box
+  const now = new Date();
+  const monthLabel = now.getMonth() + 1 + '月';
+  const monthMods = PPT_MODULES.filter(id => {
+    const m = TRAINING_MODULES.find(x => x.id === id);
+    return m && m.month === (now.getMonth()+1);
+  }).map(id => TRAINING_MODULES.find(x => x.id === id)).filter(Boolean);
+
+  let monthHTML = '';
+  if(monthMods.length > 0) {
+    monthHTML = `<div class="clinician-month">
+      <div class="clinician-month-title">📅 ${monthLabel}重点培训</div>
+      ${monthMods.map(m => {
+        const done = isDone(m.id);
+        return `<div class="clinician-module-row" onclick="launchHTML('${m.id}')">
+          <span class="cm-icon">${TRAINING_DOMAINS[m.domain].icon}</span>
+          <div class="cm-info">
+            <div class="cm-title">${m.title}${done?' ✅':''}</div>
+            <div class="cm-meta">⏱️ ${m.duration}分钟 · ${PPT_SLIDES[m.id]||'?'}页</div>
+          </div>
+          <button class="cm-btn ${done?'done':''}" onclick="event.stopPropagation();${done?'':`launchHTML('${m.id}')`}">${done?'已完成':'▶ 开始学习'}</button>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+  document.getElementById('clinicianMonthBox').innerHTML = monthHTML;
+
+  // All modules list
+  const grouped = {};
+  pptMods.forEach(m => {
+    if(!grouped[m.month||'?']) grouped[m.month||'?'] = [];
+    grouped[m.month||'?'].push(m);
+  });
+
+  let listHTML = '';
+  const sortedMonths = Object.keys(grouped).sort((a,b) => (parseInt(a)||99) - (parseInt(b)||99));
+  sortedMonths.forEach(mon => {
+    const mods = grouped[mon];
+    if(parseInt(mon) === (now.getMonth()+1)) return; // Already in month box
+    listHTML += `<div style="font-size:11px;font-weight:700;color:var(--text-secondary);margin:12px 0 4px;padding-left:4px">📅 ${mon}月</div>`;
+    mods.forEach(m => {
+      const done = isDone(m.id);
+      listHTML += `<div class="clinician-module-row" onclick="launchHTML('${m.id}')">
+        <span class="cm-icon">${TRAINING_DOMAINS[m.domain].icon}</span>
+        <div class="cm-info">
+          <div class="cm-title">${m.title}${done?' ✅':''}</div>
+          <div class="cm-meta">⏱️ ${m.duration}分钟 · ${PPT_SLIDES[m.id]||'?'}页</div>
+        </div>
+        <button class="cm-btn ${done?'done':''}" onclick="event.stopPropagation();${done?'':`launchHTML('${m.id}')`}">${done?'已完成':'▶ 开始学习'}</button>
+      </div>`;
+    });
+  });
+  document.getElementById('clinicianModuleList').innerHTML = listHTML || '<div style="text-align:center;padding:20px;color:var(--text-secondary)">暂无课程</div>';
+
+  // Update header progress
+  const totalAll = TRAINING_MODULES.length;
+  const doneAll = TRAINING_MODULES.filter(m => isDone(m.id)).length;
+  const pctAll = totalAll ? Math.round(doneAll/totalAll*100) : 0;
+  document.getElementById('globalProgressFill').style.width = pctAll+'%';
+  document.getElementById('globalProgressText').textContent = pctAll+'% ('+doneAll+'/'+totalAll+')';
+  document.getElementById('statDone').textContent = doneAll;
+}
+
+// ==================== FILTER ====================
+function filteredModules() {
+  return TRAINING_MODULES.filter(m => {
+    if(filters.domain !== 'all' && m.domain !== filters.domain) return false;
+    if(filters.status !== 'all' && m.status !== filters.status) return false;
+    if(filters.audience !== 'all') {
+      const a = filters.audience;
+      if(a === 'all-staff' && !m.audience.includes('all')) return false;
+      if(a === 'doctor' && !m.audience.includes('doctor') && !m.audience.includes('all')) return false;
+      if(a === 'nurse' && !m.audience.includes('nurse') && !m.audience.includes('all')) return false;
+      if(a === 'dept' && !m.audience.includes('dept')) return false;
+      if(a === 'newcomer' && !m.audience.includes('newcomer')) return false;
+    }
+    return true;
+  });
+}
+
+// ==================== RENDER MAP ====================
+function renderMap() {
+  const grid = document.getElementById('domainGrid');
+  const filtered = filteredModules();
+  const grouped = {};
+  filtered.forEach(m => {
+    if(!grouped[m.domain]) grouped[m.domain] = [];
+    grouped[m.domain].push(m);
+  });
+
+  let html = '';
+  for(const [dkey, dval] of Object.entries(TRAINING_DOMAINS)) {
+    const modules = grouped[dkey] || [];
+    const color = domainColor(dkey);
+    html += `<div class="domain-card">
+      <div class="domain-header" style="background:${color}" onclick="toggleDomain(this)" data-domain="${dkey}">
+        <span class="domain-icon">${dval.icon}</span>
+        <span class="domain-title">${dval.name}</span>
+        <span class="domain-count">${modules.length} 个模块</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="domain-body" data-domain="${dkey}">
+        ${modules.map(m => renderModuleItem(m)).join('')}
+      </div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+  restoreDomainStates();
+}
+
+function renderModuleItem(m) {
+  const done = isDone(m.id);
+  const domain = TRAINING_DOMAINS[m.domain];
+  const statusInfo = STATUS_TAGS[m.status];
+  return `
+  <div class="module-item${done?' done':''}" onclick="openModuleDetail('${m.id}')">
+    <div class="module-status">${statusInfo.icon}</div>
+    <div class="module-info">
+      <div class="module-title">
+        ${m.title}
+        <span class="badge badge-domain" style="background:${domainColor(m.domain)}">${domain.icon} ${domain.name}</span>
+        <span class="badge ${statusInfo.cls}">${statusInfo.label}</span>
+      </div>
+      <div class="module-subtitle">${m.subtitle}</div>
+      <div class="module-meta">
+        <span style="font-size:10px;color:var(--text-secondary)">⏱️ ${m.duration}分钟</span>
+        <span style="font-size:10px;color:var(--text-secondary)">👥 ${m.audience.map(a=>AUDIENCE_LEVELS[a]?.name||a).join('·')}</span>
+        ${m.month ? `<span style="font-size:10px;color:var(--text-secondary)">📅 ${m.month}月</span>` : ''}
+      </div>
+    </div>
+    <div class="module-check" onclick="event.stopPropagation()">
+      <input type="checkbox" class="cl-cb" ${done?'checked':''} onclick="toggleModuleDone('${m.id}')" title="标记培训完成">
+    </div>
+  </div>`;
+}
+
+function toggleDomain(header) {
+  header.classList.toggle('collapsed');
+  const body = header.nextElementSibling;
+  body.classList.toggle('collapsed');
+  localStorage.setItem('training-map-domain-'+header.dataset.domain, header.classList.contains('collapsed')?'collapsed':'open');
+}
+
+function restoreDomainStates() {
+  document.querySelectorAll('.domain-header').forEach(h => {
+    const state = localStorage.getItem('training-map-domain-'+h.dataset.domain);
+    if(state === 'collapsed') {
+      h.classList.add('collapsed');
+      h.nextElementSibling.classList.add('collapsed');
+    }
+  });
+}
+
+// ==================== RENDER PLAN ====================
+function renderPlan() {
+  const timeline = document.getElementById('timelineH2');
+  let html = '';
+  H2_PLAN.forEach(month => {
+    const monthDone = month.modules.every(id => isDone(id));
+    const monthPartial = month.modules.some(id => isDone(id));
+    const isActive = month.month === 7; // July is current planned
+    const tlClass = monthDone ? 'done' : (monthPartial || isActive ? 'active' : '');
+    html += `<div class="tl-month ${tlClass}" data-month="${month.label}">
+      <div class="tl-month-header">
+        ${month.label}
+        ${monthDone ? '✅' : monthPartial ? '🔶' : ''}
+        <span style="font-size:11px;font-weight:400;color:var(--text-secondary)">${month.month}月培训计划</span>
+      </div>
+      <div class="tl-month-note">💡 ${month.note}</div>
+      <div class="tl-modules">
+        ${month.modules.map(id => {
+          const m = TRAINING_MODULES.find(x => x.id === id);
+          if(!m) return '';
+          const done = isDone(id);
+          const statusInfo = STATUS_TAGS[m.status];
+          return `<div class="tl-module${done?' done':''}" onclick="openModuleDetail('${id}')">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <span style="font-size:11px">${done?'✅':statusInfo.icon}</span>
+              <span style="font-weight:600;font-size:12px">${m.title}</span>
+            </div>
+            <div style="font-size:10px;color:var(--text-secondary)">⏱️ ${m.duration}分钟 · 👥 ${m.audience.map(a=>AUDIENCE_LEVELS[a]?.name||a).join('·')}</div>
+            <div style="margin-top:4px"><span class="badge ${statusInfo.cls}" style="font-size:9px">${statusInfo.label}</span></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  timeline.innerHTML = html;
+}
+
+// ==================== RENDER LIST ====================
+function renderList() {
+  const container = document.getElementById('moduleList');
+  const filtered = filteredModules();
+  const domainOrder = ['insurance','medical_record','clinical','tcm','regulation','infection'];
+  let html = '';
+
+  domainOrder.forEach(dkey => {
+    const modules = filtered.filter(m => m.domain === dkey);
+    if(!modules.length) return;
+    const dval = TRAINING_DOMAINS[dkey];
+    html += `<h3 style="margin:16px 0 8px;color:${domainColor(dkey)};font-size:15px">${dval.icon} ${dval.name}（${modules.length}个模块）</h3>`;
+    modules.forEach(m => { html += renderModuleItem(m); });
+  });
+
+  if(!filtered.length) html = '<div style="text-align:center;padding:40px;color:var(--text-secondary)">🔍 没有匹配的培训模块，请调整筛选条件</div>';
+  container.innerHTML = html;
+}
+
+// ==================== FILE LINK HELPER ====================
+function toFileUrl(path) {
+  // Convert Windows path to file:// URI
+  if(path.match(/^[A-Za-z]:[\\\/]/)) {
+    return 'file:///' + path.replace(/\\/g, '/');
+  }
+  // If it starts with ../ or ./ it's a relative path (served by HTTP server)
+  if(path.match(/^\.\.?[\\\/]/)) {
+    return path.replace(/\\/g, '/');
+  }
+  // Folder path (no extension) - open in explorer via file://
+  if(!path.includes('.')) {
+    return 'file:///' + path.replace(/\\/g, '/');
+  }
+  return path;
+}
+
+function getFileIcon(path) {
+  const ext = path.split('.').pop().toLowerCase();
+  const icons = { pptx:'📊', ppt:'📊', pdf:'📄', docx:'📝', doc:'📝', xlsx:'📊', xls:'📊', md:'📝', srt:'💬', txt:'📝', jpg:'🖼️', png:'🖼️', html:'🌐', js:'⚙️', zip:'📦', rar:'📦' };
+  return icons[ext] || '📁';
+}
+
+// ==================== MODAL ====================
+function openModuleDetail(id) {
+  const m = TRAINING_MODULES.find(x => x.id === id);
+  if(!m) return;
+  const domain = TRAINING_DOMAINS[m.domain];
+  const statusInfo = STATUS_TAGS[m.status];
+  const done = isDone(id);
+
+  const modal = document.getElementById('modalBox');
+  modal.innerHTML = `
+    <div class="modal-header">
+      <div>
+        <span style="font-size:20px">${domain.icon}</span>
+        <strong style="font-size:16px">${m.title}</strong>
+        ${done ? '<span class="badge badge-success" style="margin-left:8px">✅ 已完成</span>' : ''}
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">${m.subtitle}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="badge badge-domain" style="background:${domainColor(m.domain)}">${domain.icon} ${domain.name}</span>
+          <span class="badge ${statusInfo.cls}">${statusInfo.icon} ${statusInfo.label}</span>
+          <span class="badge badge-info">⏱️ ${m.duration}分钟</span>
+          ${m.month ? `<span class="badge badge-warning">📅 ${m.month}月排期</span>` : ''}
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h4>👥 目标受众</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${m.audience.map(a => `<span class="badge badge-info">${AUDIENCE_LEVELS[a]?.icon||''} ${AUDIENCE_LEVELS[a]?.name||a}</span>`).join('')}
+          ${m.targetDept ? `<span class="badge badge-warning">🏢 ${m.targetDept}</span>` : ''}
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h4>📐 培训形式</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${m.format.map(f => `<span class="badge badge-info">${f}</span>`).join('')}
+        </div>
+      </div>
+
+      ${m.prerequisite.length ? `
+      <div class="modal-section">
+        <h4>📎 前置模块</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${m.prerequisite.map(pid => {
+            const pm = TRAINING_MODULES.find(x => x.id === pid);
+            return pm ? `<span class="badge badge-warning" style="cursor:pointer" onclick="openModuleDetail('${pid}')">← ${pm.title}</span>` : '';
+          }).join('')}
+        </div>
+      </div>` : ''}
+
+      ${m.keywords ? `
+      <div class="modal-section">
+        <h4>🏷️ 关键词</h4>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          ${m.keywords.map(k => `<span style="font-size:10px;color:var(--text-secondary);background:#f0f4f8;padding:2px 8px;border-radius:10px">#${k}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      ${m.sourceDoc ? `
+      <div class="modal-section">
+        <h4>📄 来源文档</h4>
+        <p style="font-size:12px;color:var(--text-secondary)">${m.sourceDoc}</p>
+      </div>` : ''}
+
+      ${m.filePaths && m.filePaths.length ? `
+      <div class="modal-section">
+        <h4>📁 培训材料（${m.filePaths.length}个文件 · 点击打开）</h4>
+        ${m.filePaths.map(fp => {
+          const url = toFileUrl(fp.path);
+          const icon = getFileIcon(fp.path);
+          const isFolder = !fp.path.includes('.');
+          return `
+          <div class="modal-file-link" onclick="window.open('${url}', '_blank')" title="点击打开：${fp.path}">
+            <span class="file-icon">${icon}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:12px">${fp.label}</div>
+              <a href="${url}" target="_blank" style="font-size:10px;color:var(--text-secondary)" onclick="event.stopPropagation()">${fp.path}</a>
+              ${isFolder ? '<span style="font-size:9px;color:var(--warning)">📂 文件夹</span>' : ''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>` : `
+      <div class="modal-section">
+        <h4>📁 培训材料</h4>
+        <p style="font-size:12px;color:var(--text-secondary)">⚠️ 暂无材料文件，见下方培训预案</p>
+      </div>`}
+
+      ${m.blueprintPath ? `
+      <div class="modal-section" style="background:#fef9e7;border:1px solid var(--gold);border-radius:8px;padding:12px">
+        <h4 style="color:var(--gold)">📋 培训预案</h4>
+        <div class="modal-file-link" onclick="window.open('${toFileUrl(m.blueprintPath)}', '_blank')">
+          <span class="file-icon">📝</span>
+          <div><div style="font-weight:600;font-size:12px">查看完整培训预案</div><a href="${toFileUrl(m.blueprintPath)}" target="_blank" style="font-size:10px;color:var(--text-secondary)" onclick="event.stopPropagation()">${m.blueprintPath}</a></div>
+        </div>
+      </div>` : ''}
+
+      <div class="modal-section" style="text-align:center;padding-top:12px;border-top:1px solid var(--border)">
+        <button class="btn btn-primary" onclick="toggleModuleDone('${m.id}');closeModal()">
+          ${done ? '🔄 标记为未完成' : '✅ 标记培训完成'}
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ==================== COCKPIT ====================
+function renderCockpit() {
+  const pptMods = PPT_MODULES.map(id => TRAINING_MODULES.find(m => m.id === id)).filter(Boolean);
+
+  // Summary stats
+  const totalPPTs = pptMods.length;
+  const donePPTs = pptMods.filter(m => isDone(m.id)).length;
+  const frameworkPPTs = pptMods.filter(m => m.status === 'framework' || m.status === 'extend').length;
+  const plannedPPTs = pptMods.filter(m => m.status === 'planned').length;
+
+  document.getElementById('cockpitSummary').innerHTML = `
+    <div class="cockpit-summary-item" style="border-left:4px solid var(--primary)">
+      <div class="cockpit-summary-num" style="color:var(--primary)">${totalPPTs}</div>
+      <div class="cockpit-summary-label">📦 PPT模块总数</div>
+    </div>
+    <div class="cockpit-summary-item" style="border-left:4px solid var(--success)">
+      <div class="cockpit-summary-num" style="color:var(--success)">${donePPTs}</div>
+      <div class="cockpit-summary-label">✅ 培训已完成</div>
+    </div>
+    <div class="cockpit-summary-item" style="border-left:4px solid var(--warning)">
+      <div class="cockpit-summary-num" style="color:var(--warning)">${totalPPTs-donePPTs-plannedPPTs}</div>
+      <div class="cockpit-summary-label">🔶 材料就绪待培训</div>
+    </div>
+    <div class="cockpit-summary-item" style="border-left:4px solid var(--danger)">
+      <div class="cockpit-summary-num" style="color:var(--danger)">${plannedPPTs}</div>
+      <div class="cockpit-summary-label">📝 待开发PPT</div>
+    </div>
+  `;
+
+  // PPT cards
+  document.getElementById('cockpitGrid').innerHTML = pptMods.map(m => {
+    const domain = TRAINING_DOMAINS[m.domain];
+    const done = isDone(m.id);
+    const slideCount = PPT_SLIDES[m.id] || '?';
+    const pptPath = m.filePaths.find(fp => fp.path.endsWith('.pptx'));
+    const pptUrl = pptPath ? pptPath.path : null;
+    const statusInfo = STATUS_TAGS[m.status];
+    const hasFiles = m.filePaths && m.filePaths.length > 0;
+
+    return `
+    <div class="cockpit-card" style="border-left-color:${domainColor(m.domain)}${done ? ';opacity:0.85' : ''}">
+      <div class="cockpit-card-header">
+        <span class="cockpit-card-icon">${done ? '✅' : domain.icon}</span>
+        <span class="cockpit-card-title">${m.title}${done ? ' ✅' : ''}</span>
+      </div>
+      <div class="cockpit-card-body">
+        <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">${m.subtitle}</div>
+        <div class="cockpit-card-meta">
+          <span class="badge badge-domain" style="background:${domainColor(m.domain)}">${domain.name}</span>
+          <span class="badge ${statusInfo.cls}">${statusInfo.label}</span>
+          <span style="font-size:10px">📄 ${slideCount}页</span>
+          <span style="font-size:10px">⏱️ ${m.duration}分钟</span>
+          ${m.month ? `<span style="font-size:10px">📅 ${m.month}月</span>` : ''}
+        </div>
+      </div>
+      <div class="cockpit-card-footer">
+        <button class="cockpit-btn cockpit-btn-outline" onclick="event.stopPropagation();openModuleDetail('${m.id}')" title="查看模块详情">
+          📋 详情
+        </button>
+        <button class="cockpit-btn cockpit-btn-outline" style="border-color:var(--gold);color:var(--gold)" onclick="event.stopPropagation();launchHTML('${m.id}')" title="浏览器中打开HTML培训幻灯片">
+          🌐 HTML演示
+        </button>
+        <button class="cockpit-btn ${hasFiles ? 'cockpit-btn-primary' : 'cockpit-btn-disabled'}"
+          ${hasFiles ? `onclick="event.stopPropagation();launchPPT('${pptUrl}')"` : 'disabled'}
+          title="${hasFiles ? '点击打开本地PPT文件' : 'PPT尚未生成，请先运行 generate_ppts.py'}">
+          ▶ ${hasFiles ? '打开PPT' : '待生成'}
+        </button>
+        <button class="cockpit-btn ${done ? 'cockpit-btn-disabled' : 'cockpit-btn-gold'}"
+          ${done ? 'disabled' : `onclick="event.stopPropagation();toggleModuleDone('${m.id}');setTimeout(renderCockpit,200)"`}
+          title="${done ? '已完成' : '标记培训完成'}">
+          ${done ? '已完成 ✓' : '标记完成'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Update global progress
+  const totalAll = TRAINING_MODULES.length;
+  const doneAll = TRAINING_MODULES.filter(m => isDone(m.id)).length;
+  const pctAll = totalAll ? Math.round(doneAll / totalAll * 100) : 0;
+  document.getElementById('globalProgressFill').style.width = pctAll + '%';
+  document.getElementById('globalProgressText').textContent = pctAll + '% (' + doneAll + '/' + totalAll + ')';
+  document.getElementById('statDone').textContent = doneAll;
+}
+
+function launchPPT(relativePath) {
+  if(!relativePath) {
+    alert('PPT文件尚未生成。请在终端执行:\npython generate_ppts.py');
+    return;
+  }
+  window.open(relativePath, '_blank');
+}
+
+function launchHTML(moduleId) {
+  // Map module ID to HTML slide file path
+  const htmlMap = {
+    m01: 'ppts/html/m01-医保飞行检查迎检全流程.html',
+    m02: 'ppts/html/m02-穴位埋线门诊合规操作.html',
+    m03: 'ppts/html/m03-心电图室合规设置方案.html',
+    m14: 'ppts/html/m14-十八项核心制度与优势病种.html',
+    m15: 'ppts/html/m15-岗前培训与考核.html',
+    m16: 'ppts/html/m16-新版院内培训方案宣贯.html',
+    m17: 'ppts/html/m17-院感防控与医疗废物管理.html',
+    m18: 'ppts/html/m18-职业暴露应急处置.html'
+  };
+  const path = htmlMap[moduleId];
+  if(path) {
+    window.open(path, '_blank');
+  } else {
+    alert('HTML演示文件尚未生成。');
+  }
+}
+
+function openAllPPTs() {
+  const pptMods = PPT_MODULES.map(id => TRAINING_MODULES.find(m => m.id === id)).filter(Boolean);
+  let count = 0;
+  pptMods.forEach(m => {
+    const pptPath = m.filePaths.find(fp => fp.path.endsWith('.pptx'));
+    if(pptPath) {
+      setTimeout(() => window.open(pptPath.path, '_blank'), count * 600);
+      count++;
+    }
+  });
+  if(count === 0) {
+    alert('PPT文件均未生成。请在终端执行:\npython generate_ppts.py');
+  } else {
+    alert(`正在打开 ${count} 个PPT文件...\n\n如被浏览器拦截，请允许弹窗后重试。`);
+  }
+}
+
+// ==================== PROGRESS ====================
+function toggleModuleDone(id) {
+  setDone(id, !isDone(id));
+  refreshAll();
+}
+
+function refreshAll() {
+  const total = TRAINING_MODULES.length;
+  const doneCount = TRAINING_MODULES.filter(m => isDone(m.id)).length;
+  const pct = total ? Math.round(doneCount / total * 100) : 0;
+
+  document.getElementById('globalProgressFill').style.width = pct + '%';
+  document.getElementById('globalProgressText').textContent = pct + '% (' + doneCount + '/' + total + ')';
+  document.getElementById('statDone').textContent = doneCount;
+
+  // Re-render current view
+  if(isAdminMode) {
+    if(currentView === 'cockpit') renderCockpit();
+    else if(currentView === 'map') renderMap();
+    else if(currentView === 'plan') renderPlan();
+    else if(currentView === 'list') renderList();
+  } else {
+    renderClinicianView();
+  }
+}
+
+function resetAll() {
+  if(!confirm('确定要重置所有培训进度记录吗？此操作不可撤销。')) return;
+  const keys = [];
+  for(let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if(k.startsWith(STORAGE_PREFIX)) keys.push(k);
+  }
+  keys.forEach(k => localStorage.removeItem(k));
+  refreshAll();
+}
+
+// ==================== FILTER BAR ====================
+document.getElementById('filterBar').addEventListener('click', function(e) {
+  const chip = e.target.closest('.filter-chip');
+  if(!chip) return;
+  const filterType = chip.dataset.filter;
+  const val = chip.dataset.val;
+
+  // Update active state
+  this.querySelectorAll(`.filter-chip[data-filter="${filterType}"]`).forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+
+  filters[filterType] = val;
+  if(currentView === 'map') renderMap();
+  else if(currentView === 'plan') renderPlan();
+  else if(currentView === 'list') renderList();
+});
+
+// ==================== INIT ====================
+function init() {
+  document.getElementById('statTotal').textContent = TRAINING_MODULES.length;
+  document.getElementById('statComplete').textContent = TRAINING_MODULES.filter(m => m.status === 'complete').length;
+  document.getElementById('statFramework').textContent = TRAINING_MODULES.filter(m => m.status === 'framework').length;
+  document.getElementById('statExtend').textContent = TRAINING_MODULES.filter(m => m.status === 'extend').length;
+  document.getElementById('statPlanned').textContent = TRAINING_MODULES.filter(m => m.status === 'planned').length;
+
+  // Restore admin mode
+  isAdminMode = localStorage.getItem('training-map-admin') === '1';
+  applyAdminMode();
+}
+
+function updateGlobalProgress() {
+  const totalAll = TRAINING_MODULES.length;
+  const doneAll = TRAINING_MODULES.filter(m => isDone(m.id)).length;
+  const pctAll = totalAll ? Math.round(doneAll / totalAll * 100) : 0;
+  document.getElementById('globalProgressFill').style.width = pctAll + '%';
+  document.getElementById('globalProgressText').textContent = pctAll + '% (' + doneAll + '/' + totalAll + ')';
+  document.getElementById('statDone').textContent = doneAll;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
